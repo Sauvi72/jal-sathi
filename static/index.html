@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INGRES Jal | Voice AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                        },
+                        obsidian: '#0a0e17'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-[#0a0e17] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- Government Tricolor Minimal Line -->
+    <div class="tricolor-line w-full"></div>
+
+    <!-- Minimal Modern Navbar -->
+    <header class="border-b border-white/[0.06] bg-[#0a0e17]/80 backdrop-blur-xl sticky top-0 z-30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+            
+            <!-- Branding -->
+            <div class="flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-teal-500 to-sky-400 p-[1.5px] shadow-sm flex items-center justify-center">
+                    <div class="w-full h-full bg-[#0a0e17] rounded-full flex items-center justify-center">
+                        <i class="fa-solid fa-droplet text-teal-400 text-xs"></i>
+                    </div>
+                </div>
+                <h1 class="text-base font-semibold tracking-tight text-white">
+                    Jal
+                </h1>
+            </div>
+
+            <!-- Controls: Language & Audio -->
+            <div class="flex items-center space-x-2.5">
+                
+                <!-- Voice Mute/Unmute -->
+                <button id="toggle-tts-btn" onclick="toggleAutoTTS()" class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-white/[0.08] flex items-center justify-center text-slate-300 hover:text-white transition" title="Voice audio response toggle">
+                    <i id="tts-icon" class="fa-solid fa-volume-high text-xs text-teal-400"></i>
+                </button>
+
+                <!-- Language Selector -->
+                <div class="flex items-center bg-slate-800/80 p-0.5 rounded-full border border-white/[0.08]">
+                    <button id="lang-btn-en" onclick="setLanguage('en')" class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-600 text-white transition">
+                        EN
+                    </button>
+                    <button id="lang-btn-hi" onclick="setLanguage('hi')" class="px-2.5 py-0.5 rounded-full text-xs font-medium text-slate-400 hover:text-white transition">
+                        हिंदी
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-2xl w-full mx-auto px-4 py-4 flex flex-col justify-between">
+
+        <!-- ══ Jal Sathi — 3D Floating Robot ══ -->
+        <div class="jsr-stage text-center flex flex-col items-center py-1">
+
+            <!-- 3D Floating Scene -->
+            <div class="jsr-perspective">
+                <div id="voice-orb" class="jsr-robot state-idle" onclick="toggleVoiceRecognition()">
+
+                    <!-- Floating wrapper (animation applied here) -->
+                    <div class="jsr-float-wrap">
+
+                        <!-- ANTENNA -->
+                        <div class="jsr-antenna-wrap">
+                            <div class="jsr-antenna-stem"></div>
+                            <div class="jsr-antenna-tip" id="jsr-ant"></div>
+                        </div>
+
+                        <!-- HEAD -->
+                        <div class="jsr-head">
+                            <!-- Ear bumps -->
+                            <div class="jsr-ear jsr-ear-l"></div>
+                            <div class="jsr-ear jsr-ear-r"></div>
+                            <!-- Head gloss highlight -->
+                            <div class="jsr-head-gloss"></div>
+                            <!-- VISOR (dark screen) -->
+                            <div class="jsr-visor" id="jsr-visor">
+                                <!-- Visor shine -->
+                                <div class="jsr-visor-shine"></div>
+                                <!-- Eyes -->
+                                <div class="jsr-eyes-row">
+                                    <div class="jsr-eye" id="jsr-eye-l">
+                                        <div class="jsr-eye-shine"></div>
+                                    </div>
+                                    <div class="jsr-eye" id="jsr-eye-r">
+                                        <div class="jsr-eye-shine"></div>
+                                    </div>
+                                </div>
+                                <!-- Mouth area -->
+                                <div class="jsr-mouth-wrap">
+                                    <!-- Idle smile (CSS arc via border-radius) -->
+                                    <div class="jsr-smile" id="jsr-smile"></div>
+                                    <!-- Wave bars (listening=green / speaking=red) -->
+                                    <div class="jsr-wave-bars" id="jsr-wave-bars">
+                                        <span class="wb"></span>
+                                        <span class="wb"></span>
+                                        <span class="wb"></span>
+                                        <span class="wb"></span>
+                                        <span class="wb"></span>
+                                        <span class="wb"></span>
+                                        <span class="wb"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NECK -->
+                        <div class="jsr-neck">
+                            <div class="jsr-neck-ring"></div>
+                            <div class="jsr-neck-ring"></div>
+                        </div>
+
+                        <!-- ARMS + BODY row -->
+                        <div class="jsr-body-row">
+                            <!-- Left arm -->
+                            <div class="jsr-arm jsr-arm-l"></div>
+
+                            <!-- BODY / TORSO -->
+                            <div class="jsr-body" id="jsr-body">
+                                <!-- Body gloss -->
+                                <div class="jsr-body-gloss"></div>
+                                <!-- BELLY MIC BUTTON -->
+                                <div class="jsr-mic-btn" id="jsr-mic" onclick="event.stopPropagation(); toggleVoiceRecognition()">
+                                    <div class="jsr-mic-inner">
+                                        <div class="jsr-mic-ring"></div>
+                                        <i class="fa-solid fa-microphone jsr-mic-icon"></i>
+                                    </div>
+                                </div>
+                                <!-- Body seam line -->
+                                <div class="jsr-body-seam"></div>
+                            </div>
+
+                            <!-- Right arm -->
+                            <div class="jsr-arm jsr-arm-r"></div>
+                        </div>
+
+                    </div><!-- /float-wrap -->
+
+                    <!-- Ground shadow (inverse scale) -->
+                    <div class="jsr-ground-shadow" id="jsr-shadow"></div>
+
+                </div><!-- /jsr-robot -->
+            </div><!-- /jsr-perspective -->
+
+            <!-- Status text -->
+            <div class="mt-3 flex items-center justify-center">
+                <p id="orb-status-text" class="text-xs font-medium text-slate-400 flex items-center gap-1.5 transition-all duration-300">
+                    <span class="w-1.5 h-1.5 rounded-full bg-teal-400 inline-block animate-pulse"></span>
+                    <span>🤖 Tap me to speak</span>
+                </p>
+            </div>
+
+            <!-- Stop Banner -->
+            <div id="speaking-indicator" class="hidden mt-2 items-center gap-2 bg-slate-900/90 border border-teal-500/30 px-3 py-1.5 rounded-full shadow-lg transition-all">
+                <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
+                    <span class="text-xs text-teal-200">Speaking...</span>
+                </div>
+                <button onclick="stopAllSpeech()" class="text-xs bg-rose-600/90 hover:bg-rose-500 text-white px-2 py-0.5 rounded-full font-medium transition cursor-pointer">
+                    Stop <kbd class="text-[9px] text-rose-200 bg-rose-800/80 px-1 rounded">Esc</kbd>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Conversational Chat Feed -->
+        <div id="chat-container" class="flex-1 overflow-y-auto space-y-4 py-3 min-h-[240px] max-h-[calc(100vh-420px)] sm:max-h-[calc(100vh-430px)] pr-1">
+            <!-- Messages render here dynamically -->
+        </div>
+
+        <!-- Bottom Controls & Input Area -->
+        <div class="pt-2">
+
+            <!-- Suggested Inquiries Minimal Chips -->
+            <div id="quick-chips-container" class="flex items-center justify-center gap-2 overflow-x-auto pb-2 no-scrollbar text-xs">
+                <!-- Populated dynamically by JS -->
+            </div>
+
+            <!-- Floating Input Pill with Dual Controls -->
+            <div class="floating-input-pill rounded-full px-2 py-1.5 sm:px-3 sm:py-2 flex items-center space-x-2">
+                
+                <!-- Compact Input Mic Button -->
+                <button id="input-mic-btn" onclick="toggleVoiceRecognition()" class="w-8 h-8 rounded-full bg-slate-800/80 hover:bg-slate-700 text-teal-400 hover:text-teal-300 flex items-center justify-center transition flex-shrink-0 cursor-pointer" title="Voice input">
+                    <i id="input-mic-icon" class="fa-solid fa-microphone text-xs"></i>
+                </button>
+
+                <!-- Clean Text Input -->
+                <div class="flex-1">
+                    <input 
+                        type="text" 
+                        id="user-input" 
+                        placeholder="Apne zille ya fasal ke baare mein poochein..." 
+                        class="w-full bg-transparent text-slate-100 placeholder-slate-400 text-xs sm:text-sm px-1 focus:outline-none"
+                        onkeydown="if(event.key === 'Enter') handleSend();"
+                    >
+                </div>
+
+                <!-- Send Button -->
+                <button id="send-btn" onclick="handleSend()" class="w-8 h-8 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center transition flex-shrink-0 cursor-pointer shadow-md" title="Send query">
+                    <i class="fa-solid fa-arrow-up text-xs sm:text-sm"></i>
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="/static/app.js?v=2.1"></script>
+</body>
+</html>
