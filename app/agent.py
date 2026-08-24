@@ -65,7 +65,30 @@ Few-Shot Dialogues:
   Bot: "Kisan bhai, kam paani mein mota anaj jaise bajra, jowar, ragi aur moong ya chana sabse badhiya hain. Ye kam paani mein bhi achhi upaj deti hain."
 """
 
+def clean_hindi_for_tts(text: str) -> str:
+    """
+    Cleans text for natural, pure Devanagari Hindi Text-To-Speech (TTS):
+    - Strips parenthetical English translations like (Paddy), (Wheat), (Maize), (Mulching), (Waterlogging).
+    - Removes markdown syntax, bullets, emojis, and unwanted formatting.
+    - Fixes punctuation spacing for crystal-clear natural speech synthesis.
+    """
+    if not text:
+        return ""
+    # 1. Remove parenthetical English text e.g. (Paddy), (Wheat), (Maize), (DSR Paddy)
+    cleaned = re.sub(r'\([a-zA-Z\s/,\-–\d%]+\)', '', text)
+    # 2. Remove emojis and markdown bullets/symbols
+    cleaned = re.sub(r'[\*\_#•\-\–📍🌾⚠️💡💧📊⚖️🔗📢]', ' ', cleaned)
+    # 3. Fix punctuation spacing e.g. "धान , गेहूं" -> "धान, गेहूं"
+    cleaned = re.sub(r'\s+([,।\.])', r'\1', cleaned)
+    cleaned = re.sub(r'([,।\.])\1+', r'\1', cleaned)
+    cleaned = cleaned.rstrip('।').rstrip('.').strip()
+    # 4. Clean multiple spaces and whitespace
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+    return cleaned
+
+
 REGIONAL_AGRO_CLIMATIC_CACHE = {
+
     "vijaynagar": {
         "hi_suitable": "मक्का (Maize), बाजरा (Bajra), मूंगफली (Groundnut), अरहर/तूर, चना और तिल (लाल और काली दोमट मिट्टी विशेष)।",
         "en_suitable": "Maize, Pearl Millet (Bajra), Groundnut, Pigeon Pea (Arhar), Gram, and Sesame (Red & Black Loam Zone).",
@@ -622,7 +645,11 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
             clean_md = re.sub(r'^```\s*', '', clean_md)
             clean_md = re.sub(r'\s*```$', '', clean_md).strip()
             md = f"📍 **{loc_label_hi} — फसल एवं कृषि सलाह (ICAR / KVK Advisory):**\n{clean_md}{citation}" if lang == "hi" else f"📍 **{loc_label_en} — Agricultural Crop Advisory (ICAR / KVK):**\n{clean_md}{citation}"
-            spoken = f"{loc_label_hi} के लिए उपयुक्त फसलें और कृषि सलाह इस प्रकार हैं।" if lang == "hi" else f"Here are the ICAR recommended crops for {loc_label_en}."
+            if lang == "hi":
+                clean_full = clean_hindi_for_tts(clean_md)
+                spoken = f"{loc_label_hi} के लिए कृषि सलाह: {clean_full}"
+            else:
+                spoken = f"For {loc_label_en}, here are the recommended crops and irrigation advice."
             return md, spoken
 
         # Clean fallback
@@ -633,7 +660,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                 f"• ⚠️ **परहेज:** अत्यधिक पानी खींचने वाले धान और गन्ने की बाढ़ सिंचाई से बचें।\n"
                 f"• 💡 **सिंचाई सलाह:** ड्रिप और फव्वारा सिंचाई (PMKSY 55% सरकारी सब्सिडी) अपनाएं।"
             )
-            spoken = f"{loc_label_hi} के लिए मक्का, बाजरा, दलहन और सरसों उपयुक्त फसलें हैं।"
+            spoken = f"{loc_label_hi} के लिए उपयुक्त फसलें मक्का, बाजरा, मूंग, उड़द, चना, सरसों और मौसमी सब्जियां हैं। धान और गन्ने की बाढ़ सिंचाई से बचें। सिंचाई के लिए ड्रिप और फव्वारा सिस्टम अपनाएं जिसपर 55% सरकारी सब्सिडी मिलती है।"
         else:
             md = (
                 f"📍 **{loc_label_en} — Suitable Crops (Agro-Climatic Zone):**\n"
@@ -641,8 +668,9 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                 f"• ⚠️ **Crops to Avoid:** Heavy flood-irrigated Paddy and water-intensive Sugarcane.\n"
                 f"• 💡 **Irrigation Advice:** Practice micro-irrigation (Drip/Sprinkler with 55% PMKSY subsidy)."
             )
-            spoken = f"For {loc_label_en}, recommended crops are Maize, Pearl Millet, Pulses, and Mustard."
+            spoken = f"For {loc_label_en}, recommended crops are Maize, Pearl Millet, Pulses, and Mustard. Avoid flood irrigation and adopt Drip or Sprinkler systems with 55% subsidy."
         return md, spoken
+
 
 
 
@@ -1237,8 +1265,10 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                     f"• ⚠️ **परहेज (किनसे बचें):** {hi_avoid}\n"
                     f"• 💡 **सिंचाई सलाह:** {hi_tech}"
                 )
-
-                spoken = f"{dist} ज़िला के लिए उपयुक्त फसलें {hi_suitable} हैं।"
+                clean_s = clean_hindi_for_tts(hi_suitable)
+                clean_a = clean_hindi_for_tts(hi_avoid)
+                clean_t = clean_hindi_for_tts(hi_tech)
+                spoken = f"{dist} के लिए उपयुक्त फसलें {clean_s} हैं। {clean_a} सिंचाई के लिए {clean_t}"
             else:
                 md = (
                     f"📍 **{dist}, {state} — Suitable Crops (Agro-Climatic Zone):**\n"
@@ -1246,8 +1276,9 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                     f"• ⚠️ **Crops to Avoid:** {en_avoid}\n"
                     f"• 💡 **Irrigation Advice:** {en_tech}"
                 )
-                spoken = f"For {dist}, recommended crops are {en_suitable}."
+                spoken = f"For {dist}, recommended crops are {en_suitable}. Avoid {en_avoid}. Irrigation advice: {en_tech}."
             return md, spoken
+
 
 
         elif intent == "BOREWELL":
@@ -1491,11 +1522,22 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                             f"• ⚠️ **Crops to Avoid:** {cached_data['en_avoid']}\n"
                             f"• 💡 **Irrigation Advice:** {cached_data['en_tech']}"
                         )
-                    spoken_text_val = (
-                        f"{region_name} के लिए उपयुक्त फसलें {cached_data['hi_suitable']} हैं।"
-                        if lang == "hi"
-                        else f"For {region_name}, recommended crops are {cached_data['en_suitable']}."
-                    )
+                    if lang == "hi":
+                        clean_s = clean_hindi_for_tts(cached_data['hi_suitable'])
+                        clean_a = clean_hindi_for_tts(cached_data['hi_avoid'])
+                        clean_t = clean_hindi_for_tts(cached_data['hi_tech'])
+                        spoken_text_val = (
+                            f"{region_name} के लिए उपयुक्त फसलें {clean_s} हैं। "
+                            f"{clean_a}। "
+                            f"सिंचाई के लिए {clean_t}।"
+                        )
+
+                    else:
+                        spoken_text_val = (
+                            f"For {region_name}, recommended crops are {cached_data['en_suitable']}. "
+                            f"Avoid {cached_data['en_avoid']}. "
+                            f"Irrigation advice: {cached_data['en_tech']}."
+                        )
                     return {
                         "query": user_query,
                         "response": crop_md,
@@ -1509,6 +1551,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                         "language": lang,
                         "status": "success"
                     }
+
 
 
 
@@ -1599,11 +1642,21 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                             f"• ⚠️ **Crops to Avoid:** {cached_data['en_avoid']}\n"
                             f"• 💡 **Irrigation Advice:** {cached_data['en_tech']}"
                         )
-                    spoken_text_val = (
-                        f"{region_name} के लिए उपयुक्त फसलें {cached_data['hi_suitable']} हैं।"
-                        if lang == "hi"
-                        else f"For {region_name}, recommended crops are {cached_data['en_suitable']}."
-                    )
+                    if lang == "hi":
+                        clean_s = clean_hindi_for_tts(cached_data['hi_suitable'])
+                        clean_a = clean_hindi_for_tts(cached_data['hi_avoid'])
+                        clean_t = clean_hindi_for_tts(cached_data['hi_tech'])
+                        spoken_text_val = (
+                            f"{region_name} के लिए उपयुक्त फसलें {clean_s} हैं। "
+                            f"{clean_a}। "
+                            f"सिंचाई के लिए {clean_t}।"
+                        )
+                    else:
+                        spoken_text_val = (
+                            f"For {region_name}, recommended crops are {cached_data['en_suitable']}. "
+                            f"Avoid {cached_data['en_avoid']}. "
+                            f"Irrigation advice: {cached_data['en_tech']}."
+                        )
                     return {
                         "query": user_query,
                         "response": crop_md,
@@ -1617,6 +1670,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                         "language": lang,
                         "status": "success"
                     }
+
 
             # Check if query asks for crops for an out-of-database location
             if indic_intent == "crop_advisory" or any(w in q_lower for w in ["crop", "crops", "fasal", "kheti", "फसल", "खेती", "ugaye", "ugana"]):
