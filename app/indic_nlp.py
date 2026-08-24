@@ -101,6 +101,11 @@ TYPO_CORRECTIONS = {
     r"\bfasle\b": "fasal",
     r"\bfaslo\b": "fasal",
     r"\bfaslein\b": "fasal",
+    r"\bफैसले\b": "फसल",
+    r"\bफैसल\b": "फसल",
+    r"\bफैसलों\b": "फसल",
+    r"\bफसलें\b": "फसल",
+    r"\bफसलों\b": "फसल",
     r"\bpanni\b": "paani",
     r"\bpanie\b": "paani",
     r"\bbarish\b": "rain",
@@ -108,6 +113,7 @@ TYPO_CORRECTIONS = {
     r"\bvarsa\b": "rain",
     r"\bsichaye\b": "sichai"
 }
+
 
 def clean_query_typos(text: str) -> str:
     """Applies high-speed regex typo replacements on the incoming query."""

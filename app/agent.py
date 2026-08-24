@@ -276,15 +276,127 @@ STATE_BOREWELL_RULES = {
 
 
 
+FALLBACK_MODELS = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-2.5-flash-lite",
+    "gemini-3.6-flash",
+    "gemini-3.7-flash",
+    "gemini-3.5-flash",
+    "gemini-3.5-flash-lite",
+    "gemini-3-flash-preview",
+    "gemini-flash-latest"
+]
+
+def get_genai_client():
+    import os
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or GEMINI_API_KEY
+    from google import genai
+    return genai.Client(api_key=api_key)
+
+async def generate_grounded_response(prompt: str, lang: str = "hi", custom_system_prompt: Optional[str] = None) -> Tuple[str, Optional[str]]:
+    """
+    Multi-tier Model Cascade Fallback pipeline with Google Search Grounding.
+    Prioritizes gemini-2.5-flash -> gemini-2.0-flash -> gemini-2.5-flash-lite -> gemini-3.6-flash -> gemini-flash-latest.
+    """
+    if not is_gemini_configured():
+        return (
+            "कृषि और भूजल जानकारी प्राप्त करने में अस्थायी समस्या आ रही है। कृपया कुछ क्षण बाद पुनः प्रयास करें।"
+            if lang == "hi" else
+            "Temporary issue accessing live agricultural records. Please try again in a few moments.",
+            None
+        )
+
+    try:
+        from google import genai
+        from google.genai import types
+        client = get_genai_client()
+
+        system_prompt = custom_system_prompt or (
+            "You are Jal Sathi (जल साथी), an expert agro-water assistant. "
+            "If the user asks about crops for an area, suggest 3-4 suitable crops (kharif/rabi/zaid), "
+            "advise on water requirement, and avoid high-water consuming crops. "
+            "If the user asks about borewell rules, provide exact state/district groundwater extraction rules and NOC portal. "
+            "If lang is 'hi', speak in simple, conversational Hindi (सरल बोलचाल की हिंदी). "
+            "Keep answers concise, direct, and formatted in clean bullet points."
+        )
+
+        # 1. First Pass: Try Grounded Search
+        for model_name in FALLBACK_MODELS:
+            try:
+                config = types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    tools=[types.Tool(google_search=types.GoogleSearch())],
+                    temperature=0.2,
+                    max_output_tokens=350,
+                )
+                logger.info(f"🔄 Trying grounded search model: {model_name}...")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=config,
+                )
+                if response and response.text and response.text.strip():
+                    logger.info(f"✅ Success with grounded search model: {model_name}")
+                    source_url = None
+                    if response.candidates and len(response.candidates) > 0:
+                        cand = response.candidates[0]
+                        meta = getattr(cand, "grounding_metadata", None)
+                        if meta:
+                            chunks = getattr(meta, "grounding_chunks", None)
+                            if chunks:
+                                for c in chunks:
+                                    web = getattr(c, "web", None)
+                                    if web and getattr(web, "uri", None):
+                                        source_url = str(web.uri).strip()
+                                        break
+                    return response.text.strip(), source_url
+            except Exception as e:
+                logger.warning(f"⚠️ Grounded {model_name} failed ({e}). Trying next model...")
+                continue
+
+        # 2. Second Pass: If Grounded Search quota was limited, fallback to standard LLM generation
+        for model_name in FALLBACK_MODELS:
+            try:
+                config = types.GenerateContentConfig(
+                    system_instruction=system_prompt,
+                    temperature=0.2,
+                    max_output_tokens=350,
+                )
+                logger.info(f"🔄 Trying standard model fallback: {model_name}...")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=config,
+                )
+                if response and response.text and response.text.strip():
+                    logger.info(f"✅ Success with standard fallback model: {model_name}")
+                    return response.text.strip(), None
+            except Exception as e:
+                logger.warning(f"⚠️ Standard {model_name} failed ({e}).")
+                continue
+    except Exception as e:
+        logger.error(f"GenAI client initialization error: {e}")
+
+    # Emergency clean response if all models exhaust quota
+    return (
+        "कृषि और भूजल जानकारी प्राप्त करने में अस्थायी समस्या आ रही है। कृपया कुछ क्षण बाद पुनः प्रयास करें।"
+        if lang == "hi" else
+        "Temporary issue accessing live agricultural records. Please try again in a few moments.",
+        None
+    )
+
+
 class INGRESSQLAgent:
     def __init__(self):
-        self.candidate_models = [GEMINI_MODEL, "gemini-2.5-flash", "gemini-1.5-flash", "gemini-flash-latest"]
+        self.candidate_models = FALLBACK_MODELS
 
         self.system_prompt = KISAN_MITRA_SYSTEM_PROMPT
         if is_gemini_configured():
-            logger.info(f"Gemini LLM configured with model candidate: {GEMINI_MODEL}")
+            logger.info(f"Gemini LLM configured with model cascade: {FALLBACK_MODELS}")
         else:
             logger.info("Running in local Dynamic Search + Auto-Caching mode.")
+
 
     def invoke_gemini(self, messages) -> Optional[str]:
         """Invokes Gemini with automatic model fallback."""
@@ -335,10 +447,11 @@ class INGRESSQLAgent:
             from google import genai
             from google.genai import types
 
-            client = genai.Client(api_key=GEMINI_API_KEY)
+            client = get_genai_client()
             config_kwargs = {
                 "tools": [types.Tool(google_search=types.GoogleSearch())],
-                "temperature": 0.1,
+                "temperature": 0.2,
+                "max_output_tokens": 350,
             }
             if system_instruction:
                 config_kwargs["system_instruction"] = system_instruction
@@ -347,12 +460,14 @@ class INGRESSQLAgent:
 
             for model_name in self.candidate_models:
                 try:
+                    logger.info(f"🔄 Trying grounded search model: {model_name}...")
                     resp = client.models.generate_content(
                         model=model_name,
                         contents=prompt,
                         config=types.GenerateContentConfig(**config_kwargs)
                     )
                     if resp and resp.text:
+                        logger.info(f"✅ Success grounded search with model: {model_name}")
                         source_url = None
                         if resp.candidates and len(resp.candidates) > 0:
                             cand = resp.candidates[0]
@@ -376,22 +491,28 @@ class INGRESSQLAgent:
         return content, None
 
 
+
     def execute_realtime_web_grounding(self, user_query: str, lang: str = "hi") -> Tuple[str, Optional[str]]:
         """
-        Web-First Grounding for Out-of-Database Locations:
-        Directly invokes Gemini configured with native Google Search Tool for locations lacking an exact local station
-        (e.g., 'Tughlakabad', 'Noida', 'South Delhi', 'Bhojpur').
-        Constrained with max_output_tokens=180 and temperature=0.1 for sub-second latency and zero-fluff 3-bullet output.
+        Web-First Grounding for Out-of-Database Locations & Queries:
+        Uses the multi-tier Model Cascade Fallback with Google Search Grounding.
         """
-        system_instruction = """You are Jal Sathi (Jal Sathi). Your ONLY task is to return official CGWA groundwater table depth and borewell feasibility. Answer ONLY in exactly 3 bullet points following this format: [Location Name, District, State]: - Groundwater Level: [Average depth in meters and feet] - Status: [Safe / Semi-Critical / Critical / Over-Exploited / Dark Zone] - Source: [Grounding Source / Official Portal]"""
+        q_lower = user_query.lower()
+        if any(w in q_lower for w in ["crop", "crops", "fasal", "kheti", "फसल", "खेती", "फैसले", "ugaye", "ugana"]):
+            return self.fetch_dynamic_crop_advisory(user_query, lang)
 
-
+        system_instruction = """You are Jal Sathi (जल साथी), an expert Indian groundwater & agricultural assistant.
+When answering queries for an Indian location, provide clear, verified CGWA / State Authority facts:
+- 💧 Groundwater Level / Extraction Status: [Average depth in meters/feet and Category (Safe / Semi-Critical / Critical / Over-Exploited)]
+- ⚖️ Borewell Feasibility & Rules: [Permission / NOC required from State Authority / CGWA]
+- 🔗 Source: [Official Portal / Grounding Link]
+If lang is 'hi', respond in natural conversational Hindi. Keep answers strictly concise in bullet points."""
 
         user_prompt = f"Target Query: {user_query}\nRequested Language: {lang}"
         content, source_url = self.invoke_gemini_grounded(
             user_prompt,
             system_instruction=system_instruction,
-            generation_config={"max_output_tokens": 180, "temperature": 0.1}
+            generation_config={"max_output_tokens": 300, "temperature": 0.2}
         )
 
         if content and len(content.strip()) > 15:
@@ -402,17 +523,13 @@ class INGRESSQLAgent:
             text = re.sub(r'\s*```$', '', text).strip()
             
             # Ensure grounding source link is appended if missing
-            if source_url and "Source:" not in text and "स्रोत:" not in text:
+            if source_url and "Source:" not in text and "स्रोत:" not in text and "http" not in text:
                 text = text + f"\n• 🔗 **Source:** {source_url}"
-            elif not source_url and "Source:" not in text and "स्रोत:" not in text:
-                text = text + "\n• 🔗 **Source:** https://cgwaonline.gov.in"
             return text, source_url
-
 
         # Fallback formatting if Gemini search was offline
         clean_name = user_query.strip().title()
         if lang == "hi":
-
             fallback_md = (
                 f"📍 **{clean_name}:**\n"
                 f"• 💧 **भूजल स्तर:** लगभग 14.2 मीटर (~46.6 फीट) गहराई पर पानी उपलब्ध है।\n"
@@ -427,6 +544,7 @@ class INGRESSQLAgent:
                 f"• 🔗 **Source:** https://cgwaonline.gov.in"
             )
         return fallback_md, "https://cgwaonline.gov.in"
+
 
     def fetch_dynamic_crop_advisory(self, location: str, lang: str = "hi") -> Tuple[str, str]:
         """
