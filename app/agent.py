@@ -152,8 +152,89 @@ REGIONAL_AGRO_CLIMATIC_CACHE = {
         "en_avoid": "Uncontrolled tube-well flood irrigation.",
         "hi_tech": "फव्वारा सिंचाई और लेजर लैंड लेवलिंग का प्रयोग करें।",
         "en_tech": "Adopt Sprinkler systems and Laser Land Levelling."
+    },
+    "rajasthan": {
+        "hi_suitable": "बाजरा (Bajra), ग्वार (Guar), मूंग, मोठ, चना, सरसों और तिल (शुष्क व अर्ध-शुष्क क्षेत्र)।",
+        "en_suitable": "Pearl Millet (Bajra), Cluster Bean (Guar), Moong, Moth Bean, Gram, Mustard, and Sesame.",
+        "hi_avoid": "गन्ना और पारंपरिक बाढ़ सिंचाई वाला धान (डार्क ज़ोन में पूरी तरह प्रतिबंधित)।",
+        "en_avoid": "Flood-irrigated Sugarcane and water-intensive Paddy.",
+        "hi_tech": "ड्रिप और फव्वारा (स्प्रिंकलर) सिंचाई अपनाएं (राजस्थान सरकार द्वारा 70% तक अनुदान उपलब्ध)।",
+        "en_tech": "Adopt Drip and Sprinkler irrigation systems (up to 70% Rajasthan state agri-subsidy)."
+    },
+    "bihar": {
+        "hi_suitable": "धान (Paddy), गेहूं (Wheat), मक्का (Maize), दलहन (चना, मसूर), सरसों और मौसमी सब्जियां।",
+        "en_suitable": "Paddy, Wheat, Maize, Pulses (Gram, Lentil), Mustard, and seasonal vegetables (Gangetic Plain).",
+        "hi_avoid": "अत्यधिक भूजल दोहन और जलभराव (Waterlogging) से बचें।",
+        "en_avoid": "Excessive flood irrigation and waterlogging conditions.",
+        "hi_tech": "जल संरक्षण हेतु संतुलित सिंचाई, लेजर लैंड लेवलिंग और मल्चिंग (Mulching) का उपयोग करें।",
+        "en_tech": "Practice balanced micro-irrigation, laser land levelling, and mulching."
+    },
+    "uttar pradesh": {
+        "hi_suitable": "गेहूं, धान, मक्का, सरसों, दलहन (अरहर, चना, मसूर) और मौसमी सब्जियां।",
+        "en_suitable": "Wheat, Paddy, Maize, Mustard, Pulses (Arhar, Gram, Lentil), and seasonal vegetables.",
+        "hi_avoid": "अति-दोहित क्षेत्रों में गन्ने और धान की अनियंत्रित बाढ़ सिंचाई से बचें।",
+        "en_avoid": "Uncontrolled flood irrigation of heavy Sugarcane and summer Paddy.",
+        "hi_tech": "फव्वारा और ड्रिप सिंचाई प्रणाली अपनाएं (PMKSY 55% सरकारी सब्सिडी)।",
+        "en_tech": "Deploy Sprinkler and Drip irrigation systems (up to 55% PMKSY subsidy)."
+    },
+    "up": {
+        "hi_suitable": "गेहूं, धान, मक्का, सरसों, दलहन (अरहर, चना, मसूर) और मौसमी सब्जियां।",
+        "en_suitable": "Wheat, Paddy, Maize, Mustard, Pulses (Arhar, Gram, Lentil), and seasonal vegetables.",
+        "hi_avoid": "अति-दोहित क्षेत्रों में गन्ने और धान की अनियंत्रित बाढ़ सिंचाई से बचें।",
+        "en_avoid": "Uncontrolled flood irrigation of heavy Sugarcane and summer Paddy.",
+        "hi_tech": "फव्वारा और ड्रिप सिंचाई प्रणाली अपनाएं (PMKSY 55% सरकारी सब्सिडी)।",
+        "en_tech": "Deploy Sprinkler and Drip irrigation systems (up to 55% PMKSY subsidy)."
+    },
+    "punjab": {
+        "hi_suitable": "सीधी बिजाई धान (DSR Paddy), मक्का, मूंग, बासमती, गेहूं, सरसों और किन्नू/बागवानी।",
+        "en_suitable": "Direct Seeded Rice (DSR Paddy), Maize, Moong, Basmati, Wheat, Mustard, and Horticulture.",
+        "hi_avoid": "पारंपरिक जलभराव वाली धान की रोपाई और ट्यूबवेल से अत्यधिक दोहन से बचें।",
+        "en_avoid": "Puddled flood-irrigated Paddy transplantation and excessive groundwater extraction.",
+        "hi_tech": "लेजर लैंड लेवलिंग, टेंसियोमीटर आधारित सिंचाई और ड्रिप फर्टिगेशन अपनाएं।",
+        "en_tech": "Utilize Laser Land Levelling, tensiometer-guided irrigation, and Drip fertigation."
+    },
+    "haryana": {
+        "hi_suitable": "बाजरा, मक्का, मूंग, कपास, गेहूं, सरसों और चना (मेरा पानी मेरी विरासत योजना विशेष)।",
+        "en_suitable": "Pearl Millet, Maize, Moong, Cotton, Wheat, Mustard, and Gram (Crop Diversification Scheme).",
+        "hi_avoid": "डार्क ज़ोन में पारंपरिक धान की खेती से बचें।",
+        "en_avoid": "Puddled flood-irrigated Paddy in dark zone blocks.",
+        "hi_tech": "सूक्ष्म सिंचाई (Drip/Sprinkler) पर 85% तक हरियाणा सरकार सब्सिडी उपलब्ध है।",
+        "en_tech": "Adopt Drip and Sprinkler systems (up to 85% Haryana micro-irrigation subsidy)."
+    },
+    "maharashtra": {
+        "hi_suitable": "सोयाबीन, कपास, ज्वार, बाजरा, चना, अरहर, मूंग और प्याज।",
+        "en_suitable": "Soybean, Cotton, Jowar, Bajra, Gram, Arhar/Tur, Moong, and Onion.",
+        "hi_avoid": "गन्ने की पारंपरिक बाढ़ सिंचाई से बचें।",
+        "en_avoid": "Flood irrigation of heavy Sugarcane crops without drip automation.",
+        "hi_tech": "ड्रिप सिंचाई प्रणाली और फार्म पॉन्ड (शेततळे) जल संचयन अपनाएं।",
+        "en_tech": "Adopt Drip irrigation systems and Farm Pond (Shet-tale) rainwater harvesting."
+    },
+    "gujarat": {
+        "hi_suitable": "मूंगफली, कपास, बाजरा, अरंडी (Castor), जीरा, सौंफ, तिल और चना।",
+        "en_suitable": "Groundnut, Cotton, Pearl Millet, Castor, Cumin, Fennel, Sesame, and Gram.",
+        "hi_avoid": "पानी की कमी वाले क्षेत्रों में बाढ़ सिंचाई से बचें।",
+        "en_avoid": "Excessive flood irrigation in water-stressed Saurashtra/North Gujarat regions.",
+        "hi_tech": "GGRC ड्रिप एवं फव्वारा सिंचाई प्रणाली (70% सरकारी सब्सिडी) अपनाएं।",
+        "en_tech": "Deploy GGRC Drip and Sprinkler systems (up to 70% government subsidy)."
+    },
+    "madhya pradesh": {
+        "hi_suitable": "सोयाबीन, गेहूं, चना, सरसों, मक्का, अरहर और लहसुन/मसाले।",
+        "en_suitable": "Soybean, Wheat, Gram, Mustard, Maize, Pigeon Pea, and Spices/Garlic.",
+        "hi_avoid": "गर्मियों में अत्यधिक पानी खींचने वाली फसलों की अनियंत्रित सिंचाई से बचें।",
+        "en_avoid": "Unmanaged summer flood irrigation.",
+        "hi_tech": "स्प्रिंकलर और ड्रिप सिंचाई प्रणाली अपनाएं (PMKSY योजना)।",
+        "en_tech": "Practice Sprinkler and Drip micro-irrigation under PMKSY."
+    },
+    "mp": {
+        "hi_suitable": "सोयाबीन, गेहूं, चना, सरसों, मक्का, अरहर और लहसुन/मसाले।",
+        "en_suitable": "Soybean, Wheat, Gram, Mustard, Maize, Pigeon Pea, and Spices/Garlic.",
+        "hi_avoid": "गर्मियों में अत्यधिक पानी खींचने वाली फसलों की अनियंत्रित सिंचाई से बचें।",
+        "en_avoid": "Unmanaged summer flood irrigation.",
+        "hi_tech": "स्प्रिंकलर और ड्रिप सिंचाई प्रणाली अपनाएं (PMKSY योजना)।",
+        "en_tech": "Practice Sprinkler and Drip micro-irrigation under PMKSY."
     }
 }
+
 
 
 STATE_BOREWELL_RULES = {
@@ -458,35 +539,26 @@ class INGRESSQLAgent:
 
 
     def invoke_gemini(self, messages) -> Optional[str]:
-        """Invokes Gemini with automatic model fallback."""
+        """Invokes Gemini with automatic fast model fallback using Google GenAI SDK."""
         if not is_gemini_configured():
             return None
-        from langchain_google_genai import ChatGoogleGenerativeAI
-
-        for model_name in self.candidate_models:
-            try:
-                llm = ChatGoogleGenerativeAI(
-                    model=model_name,
-                    temperature=0.1,
-                    api_key=GEMINI_API_KEY,
-                    max_retries=1
-                )
-                response = llm.invoke(messages)
-                if response and response.content:
-                    raw_content = response.content
-                    if isinstance(raw_content, str):
-                        return raw_content.strip()
-                    elif isinstance(raw_content, list):
-                        parts = []
-                        for p in raw_content:
-                            if isinstance(p, str):
-                                parts.append(p)
-                            elif isinstance(p, dict) and "text" in p:
-                                parts.append(p["text"])
-                        return "\n".join(parts).strip()
-                    return str(raw_content).strip()
-            except Exception as e:
-                logger.warning(f"Gemini call with {model_name} failed: {e}")
+        try:
+            client = get_genai_client()
+            prompt_str = messages if isinstance(messages, str) else str(messages)
+            for model_name in self.candidate_models:
+                try:
+                    resp = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt_str,
+                        config={"temperature": 0.1, "max_output_tokens": 300}
+                    )
+                    if resp and resp.text and resp.text.strip():
+                        return resp.text.strip()
+                except Exception as model_e:
+                    logger.warning(f"Fast GenAI call with {model_name} failed: {model_e}")
+                    continue
+        except Exception as e:
+            logger.warning(f"GenAI invoke error: {e}")
         return None
 
     def invoke_gemini_grounded(
@@ -497,7 +569,7 @@ class INGRESSQLAgent:
     ) -> Tuple[Optional[str], Optional[str]]:
         """
         Invokes Gemini with Google Search tool enabled and extracts actual grounded source URL.
-        Returns tuple: (response_text, extracted_source_url)
+        Falls back instantly to fast standard LLM generation upon 429 quota exhaustion.
         """
         if not is_gemini_configured():
             return None, None
@@ -510,14 +582,15 @@ class INGRESSQLAgent:
             config_kwargs = {
                 "tools": [types.Tool(google_search=types.GoogleSearch())],
                 "temperature": 0.2,
-                "max_output_tokens": 350,
+                "max_output_tokens": 300,
             }
             if system_instruction:
                 config_kwargs["system_instruction"] = system_instruction
             if generation_config and isinstance(generation_config, dict):
                 config_kwargs.update(generation_config)
 
-            for model_name in self.candidate_models:
+            # Step 1: Try Grounded Search
+            for model_name in self.candidate_models[:2]:
                 try:
                     logger.info(f"🔄 Trying grounded search model: {model_name}...")
                     resp = client.models.generate_content(
@@ -546,12 +619,36 @@ class INGRESSQLAgent:
                     if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower():
                         logger.info("⚡ Search tool rate limit reached. Fast-switching to standard LLM generation...")
                         break
+
+            # Step 2: Instant Standard LLM fallback without search tool
+            std_config = {
+                "temperature": 0.2,
+                "max_output_tokens": 300,
+            }
+            if system_instruction:
+                std_config["system_instruction"] = system_instruction
+
+            for model_name in self.candidate_models:
+                try:
+                    logger.info(f"🔄 Fast standard LLM generation: {model_name}...")
+                    resp = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(**std_config)
+                    )
+                    if resp and resp.text and resp.text.strip():
+                        logger.info(f"✅ Fast standard LLM success: {model_name}")
+                        return resp.text.strip(), None
+                except Exception as std_err:
+                    logger.warning(f"Standard LLM fallback {model_name} failed: {std_err}")
+                    continue
+
         except Exception as e:
             logger.warning(f"GenAI client initialization error: {e}")
 
-        # Fallback to standard invoke_gemini without web grounding
-        content = self.invoke_gemini(f"{system_instruction}\n\n{prompt}" if system_instruction else prompt)
-        return content, None
+        # Emergency local fallback
+        return None, None
+
 
 
 
@@ -1930,14 +2027,25 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
             yield f"data: {evt}\n\n"
             await asyncio.sleep(0.012)
 
-        # Generate audio for spoken text
+        # Generate audio for spoken text with strict 2.0s timeout to never block frontend stream
         from app.tts_service import generate_speech_base64
-        text_to_speak = result.get("spoken_text") or result.get("response") or ""
-        audio_b64 = await generate_speech_base64(text_to_speak, result.get("language", "en"))
+        audio_b64 = None
+        try:
+            text_to_speak = result.get("spoken_text") or result.get("response") or ""
+            if text_to_speak and len(text_to_speak.strip()) > 0:
+                audio_b64 = await asyncio.wait_for(
+                    generate_speech_base64(text_to_speak, result.get("language", "en")),
+                    timeout=2.0
+                )
+        except Exception as tts_err:
+            logger.warning(f"Stream async TTS pre-computation timeout/skip: {tts_err}")
+            audio_b64 = None
+
         result["audio_base64"] = audio_b64
 
         final_evt = json.dumps({"token": "", "done": True, "result": result})
         yield f"data: {final_evt}\n\n"
+
 
 # Global singleton agent
 ingres_agent = INGRESSQLAgent()
