@@ -373,10 +373,11 @@ def init_geo_phonetic_corpus() -> List[Dict[str, Any]]:
 STOPWORDS = {
     "water", "level", "depth", "borewell", "borwell", "rule", "rules", "permission", "noc", "nadu", "tamil", "can", "how", "what", "where",
     "sector", "block", "district", "village", "city", "town", "area", "region", "state", "india",
-    "kya", "mein", "me", "kitna", "kitni", "paani", "pani", "lagwa", "sakte", "hain", "hai",
-    "batao", "kheti", "fasal", "faslein", "chahiye", "ugaye", "ugana", "status", "data", "deep",
-    "naya", "naye", "nayi", "nawa", "kaise", "kaisa", "baare", "bataiye", "tarika", "yahan",
-    "bhi", "aur", "ya", "par", "se", "ko", "ne", "kab", "kyun", "kaun", "kaunsi", "zila", "zilla",
+    "main", "mein", "me", "ka", "ki", "ke", "kya", "hai", "hain", "huan", "hona", "hua", "konse", "konsi", "kon", "kaun", "kaunsi",
+    "kitna", "kitni", "kitne", "paani", "pani", "lagwa", "sakte", "sakta",
+    "batao", "bataiye", "bata", "kheti", "fasal", "faslo", "faslein", "crop", "crops", "chahiye", "ugaye", "ugana", "status", "data", "deep",
+    "naya", "naye", "nayi", "nawa", "kaise", "kaisa", "kaisi", "baare", "tarika", "yahan",
+    "bhi", "aur", "ya", "par", "se", "ko", "ne", "kab", "kyun", "zila", "zilla", "tell", "show", "give", "advice", "about",
     "laga", "lagayein", "lagana", "lagao", "lagaya", "kare", "karein", "karna", "diya", "huye",
     "bad", "good", "new", "old", "top", "sub", "san", "val", "low", "mid", "job", "scheduler",
     # State names & common state tokens to prevent false village matching (e.g. Bihar -> Baihar, Delhi -> Delli)
@@ -384,6 +385,7 @@ STOPWORDS = {
     "kerala", "tamilnadu", "up", "uttar", "pradesh", "mp", "madhya", "andhra", "telangana",
     "odisha", "orissa", "bengal", "assam", "jharkhand", "chhattisgarh", "uttarakhand", "himachal"
 }
+
 
 
 

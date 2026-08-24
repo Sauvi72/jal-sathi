@@ -412,6 +412,7 @@ class INGRESSQLAgent:
         # Fallback formatting if Gemini search was offline
         clean_name = user_query.strip().title()
         if lang == "hi":
+
             fallback_md = (
                 f"📍 **{clean_name}:**\n"
                 f"• 💧 **भूजल स्तर:** लगभग 14.2 मीटर (~46.6 फीट) गहराई पर पानी उपलब्ध है।\n"
@@ -426,6 +427,57 @@ class INGRESSQLAgent:
                 f"• 🔗 **Source:** https://cgwaonline.gov.in"
             )
         return fallback_md, "https://cgwaonline.gov.in"
+
+    def fetch_dynamic_crop_advisory(self, location: str, lang: str = "hi") -> Tuple[str, str]:
+        """
+        Dynamically fetches authentic ICAR / State Agriculture Department crop recommendations
+        for any Indian district or region using Gemini Google Search grounding.
+        """
+        clean_loc = location.strip().title()
+        system_instruction = """You are an ICAR Agricultural Scientist & Kisan Mitra expert.
+When asked for crop recommendations for an Indian location, return ONLY:
+- 🌾 Kharif / Rabi / Zaid Suitable Crops: (Top 3-4 recommended drought-tolerant/high-yield crops)
+- ⚠️ Crops to Avoid: (Water-intensive crops to avoid if water-stressed)
+- 💡 Irrigation & Soil Advice: (Soil type suitability and water-saving irrigation methods like drip/sprinkler)
+Keep the answer strictly under 100 words, direct, bulleted, and without boilerplate greetings."""
+
+        prompt = f"Provide ICAR recommended agricultural crops, suitable soil types, and irrigation advice for {clean_loc}, India. Language: {lang}"
+        content, source_url = self.invoke_gemini_grounded(
+            prompt,
+            system_instruction=system_instruction,
+            generation_config={"max_output_tokens": 200, "temperature": 0.1}
+        )
+
+        citation = f"\n\n🔗 स्रोत: {source_url}" if (source_url and lang == "hi") else (f"\n\n🔗 Source: {source_url}" if source_url else "")
+
+        if content and len(content.strip()) > 20:
+            clean_md = content.strip()
+            clean_md = re.sub(r'^```markdown\s*', '', clean_md)
+            clean_md = re.sub(r'^```\s*', '', clean_md)
+            clean_md = re.sub(r'\s*```$', '', clean_md).strip()
+            md = f"📍 **{clean_loc} — फसल एवं कृषि सलाह (ICAR / KVK Advisory):**\n{clean_md}{citation}" if lang == "hi" else f"📍 **{clean_loc} — Agricultural Crop Advisory (ICAR / KVK):**\n{clean_md}{citation}"
+            spoken = f"{clean_loc} के लिए उपयुक्त फसलें और कृषि सलाह इस प्रकार हैं।" if lang == "hi" else f"Here are the ICAR recommended crops for {clean_loc}."
+            return md, spoken
+
+        # Clean fallback
+        if lang == "hi":
+            md = (
+                f"📍 **{clean_loc} — फसल एवं कृषि सलाह (Agro-Climatic Zone):**\n"
+                f"• 🌾 **उपयुक्त फसलें:** मक्का, बाजरा, दलहन (मूंग, उड़द), चना, सरसों और मौसमी सब्जियां।\n"
+                f"• ⚠️ **परहेज:** अत्यधिक पानी खींचने वाले धान और गन्ने की बाढ़ सिंचाई से बचें।\n"
+                f"• 💡 **सिंचाई सलाह:** ड्रिप और फव्वारा सिंचाई (PMKSY 55% सरकारी सब्सिडी) अपनाएं।"
+            )
+            spoken = f"{clean_loc} के लिए मक्का, बाजरा, दलहन और सरसों उपयुक्त फसलें हैं।"
+        else:
+            md = (
+                f"📍 **{clean_loc} — Suitable Crops (Agro-Climatic Zone):**\n"
+                f"• 🌾 **Recommended Crops:** Maize, Pearl Millet (Bajra), Pulses (Moong, Gram), Mustard, and seasonal vegetables.\n"
+                f"• ⚠️ **Crops to Avoid:** Heavy flood-irrigated Paddy and water-intensive Sugarcane.\n"
+                f"• 💡 **Irrigation Advice:** Practice micro-irrigation (Drip/Sprinkler with 55% PMKSY subsidy)."
+            )
+            spoken = f"For {clean_loc}, recommended crops are Maize, Pearl Millet, Pulses, and Mustard."
+        return md, spoken
+
 
 
 
@@ -1007,9 +1059,10 @@ class INGRESSQLAgent:
                 md = (
                     f"📍 **{dist} ज़िला, {state} — फसल एवं खेती सलाह (Agro-Climatic Zone):**\n"
                     f"• 🌾 **उपयुक्त फसलें:** {hi_suitable}\n"
-                    f"• ⚠️ **परहेज (किनсе बचें):** {hi_avoid}\n"
+                    f"• ⚠️ **परहेज (किनसे बचें):** {hi_avoid}\n"
                     f"• 💡 **सिंचाई सलाह:** {hi_tech}"
                 )
+
                 spoken = f"{dist} ज़िला के लिए उपयुक्त फसलें {hi_suitable} हैं।"
             else:
                 md = (
@@ -1369,7 +1422,27 @@ class INGRESSQLAgent:
                         "status": "success"
                     }
 
+            # Check if query asks for crops for an out-of-database location
+            if indic_intent == "crop_advisory" or any(w in q_lower for w in ["crop", "crops", "fasal", "kheti", "फसल", "खेती", "ugaye", "ugana"]):
+                target_loc = candidate if candidate else user_query.replace("crop", "").replace("crops", "").replace("fasal", "").replace("kaun si", "").replace("kheti", "").replace("mein", "").replace("me", "").replace("batao", "").strip()
+                if not target_loc: target_loc = "Local Region"
+                crop_md, spoken = await asyncio.to_thread(self.fetch_dynamic_crop_advisory, target_loc, lang)
+                return {
+                    "query": user_query,
+                    "response": crop_md,
+                    "spoken_text": spoken,
+                    "sql_query_used": f"ICAR Real-Time Search Grounding ({source_model})",
+                    "district": target_loc,
+                    "category_status": None,
+                    "extraction_percentage": None,
+                    "cached_from_db": False,
+                    "auto_cached": True,
+                    "language": lang,
+                    "status": "success"
+                }
+
             # Check for State / Out-of-Database Borewell Rule Queries (e.g. "Tamil nadu borwell rule")
+
             state_match = re.search(r'\b(tamil\s*nadu|karnataka|kerala|punjab|haryana|maharashtra|rajasthan|gujarat|up|bihar|mp|telangana|andhra|delhi)\b', q_lower)
             if state_match or any(w in q_lower for w in ["borewell", "borwell", "rule", "noc", "permission", "dark zone"]):
 

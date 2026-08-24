@@ -38,15 +38,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ============================================================================
-// Voice Orb State Manager (Pi / ElevenLabs style)
+// Voice Orb State Manager (Pi / ElevenLabs style) & Abort Controller
 // ============================================================================
 let activeAbortController = null;
+let currentAbortController = null;
 let activeLoadingBubbleId = null;
+let activeStreamMsgRef = null;
 
 function cancelActiveRequest() {
     if (activeAbortController) {
         try { activeAbortController.abort(); } catch (e) {}
         activeAbortController = null;
+    }
+    if (currentAbortController) {
+        try { currentAbortController.abort(); } catch (e) {}
+        currentAbortController = null;
     }
     if ('speechSynthesis' in window) {
         try { window.speechSynthesis.cancel(); } catch (e) {}
@@ -56,15 +62,23 @@ function cancelActiveRequest() {
         removeLoadingBubble(activeLoadingBubbleId);
         activeLoadingBubbleId = null;
     }
+    if (activeStreamMsgRef && activeStreamMsgRef.contentDiv) {
+        const badge = document.createElement('div');
+        badge.className = 'mt-2 inline-block px-2 py-0.5 rounded text-[11px] font-medium bg-rose-950/80 text-rose-300 border border-rose-800/40';
+        badge.textContent = currentLang === 'hi' ? '⏹️ [जनरेशन रोक दिया गया / Generation stopped]' : '⏹️ [Generation stopped]';
+        activeStreamMsgRef.contentDiv.appendChild(badge);
+        activeStreamMsgRef = null;
+    } else {
+        appendBotMessage(
+            currentLang === 'hi' ? '⏹️ *[जनरेशन रोक दिया गया / Generation stopped]*' : '⏹️ *[Generation stopped]*',
+            '', 'en', false, false, null, null
+        );
+    }
     setOrbState('idle');
-    appendBotMessage(
-        currentLang === 'hi' ? '⏹️ *अनुरोध रद्द किया गया (Request Cancelled)*' : '⏹️ *Request Cancelled*',
-        '', 'en', false, false, null, null
-    );
 }
 
 function handleRobotTap() {
-    if (activeAbortController) {
+    if (activeAbortController || currentAbortController) {
         cancelActiveRequest();
     } else if (isRecording) {
         stopVoiceRecognition(true);
@@ -73,13 +87,15 @@ function handleRobotTap() {
     }
 }
 
-// Drive the CSS state machine on the robot root
+// Drive the CSS state machine on the robot root & Stop button
 function setOrbState(state) {
     const orb = document.getElementById('voice-orb');
     const statusText = document.getElementById('orb-status-text');
     const speakingBanner = document.getElementById('speaking-indicator');
     const inputMicBtn = document.getElementById('input-mic-btn');
     const inputMicIcon = document.getElementById('input-mic-icon');
+    const sendBtn = document.getElementById('send-btn');
+    const sendIcon = document.getElementById('send-icon');
 
     if (!orb || !statusText) return;
 
@@ -93,6 +109,12 @@ function setOrbState(state) {
             inputMicBtn.onclick = toggleVoiceRecognition;
         }
         if (inputMicIcon) inputMicIcon.className = 'fa-solid fa-microphone-lines text-xs';
+        if (sendBtn) {
+            sendBtn.className = 'w-8 h-8 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center transition flex-shrink-0 cursor-pointer shadow-md';
+            sendBtn.setAttribute('title', 'Send query');
+            sendBtn.onclick = handleSend;
+        }
+        if (sendIcon) sendIcon.className = 'fa-solid fa-arrow-up text-xs sm:text-sm';
 
     } else if (state === 'speaking') {
         statusText.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-sky-400 inline-block animate-pulse"></span><span class="text-sky-300">${currentLang === 'hi' ? '🔊 जल साथी बोल रहा है...' : '🔊 Jal Sathi is speaking...'}</span>`;
@@ -105,16 +127,28 @@ function setOrbState(state) {
             inputMicBtn.onclick = toggleVoiceRecognition;
         }
         if (inputMicIcon) inputMicIcon.className = 'fa-solid fa-microphone text-xs';
+        if (sendBtn) {
+            sendBtn.className = 'w-8 h-8 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center transition flex-shrink-0 cursor-pointer shadow-md';
+            sendBtn.setAttribute('title', 'Send query');
+            sendBtn.onclick = handleSend;
+        }
+        if (sendIcon) sendIcon.className = 'fa-solid fa-arrow-up text-xs sm:text-sm';
 
     } else if (state === 'thinking') {
-        statusText.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block animate-ping"></span><span class="text-rose-300 font-medium cursor-pointer" onclick="cancelActiveRequest()">${currentLang === 'hi' ? '⏹️ टैप करें रद्द करने के लिए / Tap robot to cancel' : '⏹️ Tap bot to cancel / stop thinking'}</span>`;
+        statusText.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-rose-400 inline-block animate-ping"></span><span class="text-rose-300 font-medium cursor-pointer" onclick="cancelActiveRequest()">${currentLang === 'hi' ? '⏹️ रोकें / Stop generating' : '⏹️ Stop generating (Click to stop)'}</span>`;
         if (speakingBanner) speakingBanner.classList.add('hidden');
         if (inputMicBtn) {
             inputMicBtn.className = 'w-8 h-8 rounded-full bg-rose-900/80 hover:bg-rose-800 text-rose-300 flex items-center justify-center transition flex-shrink-0 cursor-pointer shadow-md animate-pulse';
-            inputMicBtn.setAttribute('title', 'Tap to cancel request');
+            inputMicBtn.setAttribute('title', 'Tap to stop generation');
             inputMicBtn.onclick = cancelActiveRequest;
         }
         if (inputMicIcon) inputMicIcon.className = 'fa-solid fa-stop text-xs';
+        if (sendBtn) {
+            sendBtn.className = 'w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center transition flex-shrink-0 cursor-pointer shadow-md animate-pulse';
+            sendBtn.setAttribute('title', 'Stop generation');
+            sendBtn.onclick = cancelActiveRequest;
+        }
+        if (sendIcon) sendIcon.className = 'fa-solid fa-stop text-xs';
 
     } else {
         // Idle
@@ -125,8 +159,15 @@ function setOrbState(state) {
             inputMicBtn.onclick = toggleVoiceRecognition;
         }
         if (inputMicIcon) inputMicIcon.className = 'fa-solid fa-microphone text-xs';
+        if (sendBtn) {
+            sendBtn.className = 'w-8 h-8 rounded-full bg-teal-600 hover:bg-teal-500 text-white flex items-center justify-center transition flex-shrink-0 cursor-pointer shadow-md';
+            sendBtn.setAttribute('title', 'Send query');
+            sendBtn.onclick = handleSend;
+        }
+        if (sendIcon) sendIcon.className = 'fa-solid fa-arrow-up text-xs sm:text-sm';
     }
 }
+
 
 
 const SUGGESTIONS_POOL = {
@@ -573,7 +614,9 @@ function appendStreamingBotMessage() {
     const contentDiv = document.getElementById(msgId);
     const speakBtn = bubble.querySelector('.speak-msg-btn');
 
-    return {
+    const streamObj = {
+        msgId: msgId,
+        contentDiv: contentDiv,
         updateContent: (mdText) => {
             contentDiv.innerHTML = parseMarkdown(mdText);
             container.scrollTop = container.scrollHeight;
@@ -589,6 +632,8 @@ function appendStreamingBotMessage() {
         },
         speakBtn: speakBtn
     };
+    activeStreamMsgRef = streamObj;
+    return streamObj;
 }
 
 async function handleSend() {
@@ -596,7 +641,7 @@ async function handleSend() {
     const query = input.value.trim();
     if (!query) return;
 
-    if (activeAbortController) {
+    if (activeAbortController || currentAbortController) {
         cancelActiveRequest();
     }
 
@@ -608,14 +653,16 @@ async function handleSend() {
     const loadingBubbleId = appendLoadingBubble();
     activeLoadingBubbleId = loadingBubbleId;
     activeAbortController = new AbortController();
+    currentAbortController = activeAbortController;
 
     try {
         const response = await fetch('/api/chat/stream', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: query, language: 'auto' }),
+            body: JSON.stringify({ query: query, language: currentLang }),
             signal: activeAbortController.signal
         });
+
 
         if (!response.ok) {
             // Fallback to standard /api/chat if streaming fails
