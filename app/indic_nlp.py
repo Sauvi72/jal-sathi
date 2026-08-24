@@ -86,12 +86,82 @@ NON_DISTRICT_WORDS = {
     "बताएं", "बताइए", "बताओ", "बताने", "होता", "होती", "होते", "सकते", "सकती", "सकता", "चाहिए", "लगाना", "लगाए", "लगाएं", "जानना", "पूछना", "दिखाइए", "करना", "बचाएं", "कम", "ज्यादा", "अधिक", "क्या", "कैसे", "कितना", "कहाँ", "कहा", "कौन", "कौनसा", "कौनसी", "है", "हैं", "हूँ", "हो", "का", "की", "के", "में", "पर", "से", "को", "और", "या"
 }
 
-INDIAN_STATES = {
-    "uttar pradesh", "punjab", "rajasthan", "maharashtra", "haryana",
-    "madhya pradesh", "bihar", "gujarat", "karnataka", "tamil nadu",
-    "andhra pradesh", "telangana", "west bengal", "odisha", "jharkhand",
-    "chhattisgarh", "uttarakhand", "himachal pradesh", "kerala", "assam"
+# Common query typo corrections dictionary
+TYPO_CORRECTIONS = {
+    r"\bborwell\b": "borewell",
+    r"\bborwells\b": "borewells",
+    r"\bboring\b": "borewell",
+    r"\btubwell\b": "tubewell",
+    r"\bkponsi\b": "kaun si",
+    r"\bkaunsi\b": "kaun si",
+    r"\bkon si\b": "kaun si",
+    r"\bkonsi\b": "kaun si",
+    r"\bmausam\b": "weather",
+    r"\bmosam\b": "weather",
+    r"\bfasle\b": "fasal",
+    r"\bfaslo\b": "fasal",
+    r"\bfaslein\b": "fasal",
+    r"\bpanni\b": "paani",
+    r"\bpanie\b": "paani",
+    r"\bbarish\b": "rain",
+    r"\bbaaris\b": "rain",
+    r"\bvarsa\b": "rain",
+    r"\bsichaye\b": "sichai"
 }
+
+def clean_query_typos(text: str) -> str:
+    """Applies high-speed regex typo replacements on the incoming query."""
+    if not text:
+        return ""
+    cleaned = text
+    for pattern, repl in TYPO_CORRECTIONS.items():
+        cleaned = re.sub(pattern, repl, cleaned, flags=re.IGNORECASE)
+    return cleaned
+
+INDIAN_STATES_AND_METROS = {
+    "delhi": {"name": "Delhi", "type": "ut_metro", "aliases": ["delhi", "dilli", "nct", "दिल्ली", "नई दिल्ली", "new delhi"]},
+    "bihar": {"name": "Bihar", "type": "state", "aliases": ["bihar", "बिहार"]},
+    "uttar pradesh": {"name": "Uttar Pradesh", "type": "state", "aliases": ["uttar pradesh", "up", "उत्तर प्रदेश", "यूपी"]},
+    "punjab": {"name": "Punjab", "type": "state", "aliases": ["punjab", "पंजाब"]},
+    "haryana": {"name": "Haryana", "type": "state", "aliases": ["haryana", "हरियाणा"]},
+    "rajasthan": {"name": "Rajasthan", "type": "state", "aliases": ["rajasthan", "राजस्थान"]},
+    "tamil nadu": {"name": "Tamil Nadu", "type": "state", "aliases": ["tamil nadu", "tamilnadu", "तमिलनाडु", "तमिलनाडू"]},
+    "maharashtra": {"name": "Maharashtra", "type": "state", "aliases": ["maharashtra", "महाराष्ट्र"]},
+    "karnataka": {"name": "Karnataka", "type": "state", "aliases": ["karnataka", "कर्नाटक"]},
+    "gujarat": {"name": "Gujarat", "type": "state", "aliases": ["gujarat", "गुजरात"]},
+    "west bengal": {"name": "West Bengal", "type": "state", "aliases": ["west bengal", "bengal", "पश्चिम बंगाल", "बंगाल"]},
+    "madhya pradesh": {"name": "Madhya Pradesh", "type": "state", "aliases": ["madhya pradesh", "mp", "मध्य प्रदेश", "एमपी"]},
+    "kerala": {"name": "Kerala", "type": "state", "aliases": ["kerala", "केरल"]},
+    "andhra pradesh": {"name": "Andhra Pradesh", "type": "state", "aliases": ["andhra pradesh", "andhra", "आंध्र प्रदेश"]},
+    "telangana": {"name": "Telangana", "type": "state", "aliases": ["telangana", "तेलंगाना"]},
+    "odisha": {"name": "Odisha", "type": "state", "aliases": ["odisha", "orissa", "ओडिशा", "उड़ीसा"]},
+    "jharkhand": {"name": "Jharkhand", "type": "state", "aliases": ["jharkhand", "झारखंड"]},
+    "chhattisgarh": {"name": "Chhattisgarh", "type": "state", "aliases": ["chhattisgarh", "छत्तीसगढ़"]},
+    "uttarakhand": {"name": "Uttarakhand", "type": "state", "aliases": ["uttarakhand", "उत्तराखंड", "uttaranchal"]},
+    "himachal pradesh": {"name": "Himachal Pradesh", "type": "state", "aliases": ["himachal pradesh", "himachal", "हिमाचल प्रदेश"]},
+    "assam": {"name": "Assam", "type": "state", "aliases": ["assam", "असम"]},
+    "mumbai": {"name": "Mumbai", "type": "metro", "aliases": ["mumbai", "bombay", "मुंबई"]},
+    "bengaluru": {"name": "Bengaluru", "type": "metro", "aliases": ["bengaluru", "bangalore", "बेंगलुरु", "बैंगलोर"]},
+    "kolkata": {"name": "Kolkata", "type": "metro", "aliases": ["kolkata", "calcutta", "कोलकाता"]},
+    "chennai": {"name": "Chennai", "type": "metro", "aliases": ["chennai", "madras", "चेन्नई"]},
+    "hyderabad": {"name": "Hyderabad", "type": "metro", "aliases": ["hyderabad", "हैदराबाद"]}
+}
+
+def extract_state_or_metro(query: str) -> Optional[Dict[str, Any]]:
+    """Detects if query targets an Indian State, UT, or Major Metro."""
+    q_clean = clean_query_typos(query).lower()
+    for key, data in INDIAN_STATES_AND_METROS.items():
+        for alias in data["aliases"]:
+            pattern = rf'\b{re.escape(alias)}\b'
+            if re.search(pattern, q_clean):
+                return {
+                    "key": key,
+                    "name": data["name"],
+                    "type": data["type"]
+                }
+    return None
+
+INDIAN_STATES = set(INDIAN_STATES_AND_METROS.keys())
 
 # Candidate labels for Hugging Face Zero-Shot Intent Classification
 HF_INTENT_LABELS = {
@@ -100,6 +170,7 @@ HF_INTENT_LABELS = {
     "groundwater water level depth or extraction status": "water_status",
     "casual greeting namaste or general conversation": "casual_chat"
 }
+
 
 def detect_language(text: str, preferred_lang: Optional[str] = None) -> str:
     """Detects if input is Hindi or English."""
@@ -135,22 +206,23 @@ def is_valid_district_entity(candidate: Optional[str]) -> bool:
 def extract_district_entity(query: str) -> Optional[str]:
     """
     Extracts a verified geographical district/block/village/state from query.
-    Returns None for conceptual or location-free inquiries.
+    Prioritizes State/Metro detection to avoid false village substring matches.
     """
-    normalized = query.lower()
+    cleaned_query = clean_query_typos(query)
+    normalized = cleaned_query.lower()
     for hi_name, en_name in TRANSLITERATION_MAP.items():
         if hi_name in query:
             normalized = normalized.replace(hi_name, en_name.lower())
 
-    # 1. Match transliteration / seeded district dictionary
-    for hi_name, en_name in TRANSLITERATION_MAP.items():
-        if en_name.lower() not in INDIAN_STATES and (re.search(rf"\b{re.escape(en_name.lower())}\b", normalized) or hi_name in query):
-            return en_name.title()
+    # 1. State / UT / Metro Check (Highest Priority)
+    state_match = extract_state_or_metro(cleaned_query)
+    if state_match:
+        return state_match["name"]
 
-    # 2. Match state names
-    for s in INDIAN_STATES:
-        if re.search(rf"\b{re.escape(s)}\b", normalized):
-            return s.title()
+    # 2. Match transliteration / seeded district dictionary
+    for hi_name, en_name in TRANSLITERATION_MAP.items():
+        if (re.search(rf"\b{re.escape(en_name.lower())}\b", normalized) or hi_name in query):
+            return en_name.title()
 
     # 3. Match explicit preposition patterns
     geo_patterns = [
@@ -166,9 +238,8 @@ def extract_district_entity(query: str) -> Optional[str]:
             if is_valid_district_entity(cand):
                 return cand
 
-    # 4. Check word tokens/bi-grams against CGWB database directly
-    words = [w for w in re.findall(r'[a-zA-Z\u0900-\u097F]+', query) if len(w) >= 3]
-    # Check 2-word ngrams first
+    # 4. Check word tokens/bi-grams against CGWB database directly (District > Block > Village)
+    words = [w for w in re.findall(r'[a-zA-Z\u0900-\u097F]+', cleaned_query) if len(w) >= 3]
     for i in range(len(words) - 1):
         ngram = f"{words[i]} {words[i+1]}"
         if is_valid_district_entity(ngram):
@@ -180,7 +251,6 @@ def extract_district_entity(query: str) -> Optional[str]:
             except Exception:
                 pass
 
-    # Check 1-word tokens
     for w in words:
         if is_valid_district_entity(w):
             try:
@@ -192,6 +262,7 @@ def extract_district_entity(query: str) -> Optional[str]:
                 pass
 
     return None
+
 
 def classify_intent_local(query: str) -> Tuple[str, float]:
     """

@@ -402,11 +402,18 @@ def phonetic_fuzzy_correct_location(user_query: str, min_score: float = 0.88) ->
     if not user_query or not user_query.strip():
         return None
 
+    from app.indic_nlp import extract_state_or_metro
+    state_target = extract_state_or_metro(user_query)
+    if state_target:
+        # User query is targeting a State or UT or Metro; skip fuzzy village search
+        return None
+
     corpus = init_geo_phonetic_corpus()
     if not corpus:
         return None
 
     clean_query = user_query.strip().lower()
+
     words = re.findall(r'[a-z0-9]+', clean_query)
     if not words:
         return None
@@ -553,7 +560,14 @@ def get_cgwb_water_level(user_query: str) -> Optional[Dict[str, Any]]:
             if dist_row:
                 matched_dist = dist_row["district"].lower()
 
+        # Check if query is targeting a State or UT directly without a specific district
+        from app.indic_nlp import extract_state_or_metro
+        state_match = extract_state_or_metro(clean_query)
+        if state_match and not matched_dist:
+            return None
+
         valid_ngrams = set(ng for ng in ngrams if (not matched_dist or ng != matched_dist) and ng not in STOPWORDS and len(ng) >= 3)
+
 
 
         # --- TIER 1: Village / Block Specific Lookup ---

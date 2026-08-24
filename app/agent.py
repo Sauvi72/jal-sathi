@@ -173,8 +173,105 @@ STATE_BOREWELL_RULES = {
         "hi_rules": "कर्नाटक भूजल प्राधिकरण (KGWA) के तहत चिन्हित अति-दोहित तालुकों में नए बोरवेल की खुदाई से पहले ऑनलाइन परमिशन लेना अनिवार्य है।",
         "en_rules": "Under the Karnataka Ground Water Authority (KGWA), drilling in notified over-exploited taluks requires prior statutory permission and mandatory registration.",
         "portal": "https://kgwa.karnataka.gov.in"
+    },
+    "gujarat": {
+        "aliases": ["gujarat", "गुजरात"],
+        "title": "Gujarat (गुजरात)",
+        "status": "GWRDC Regulated",
+        "hi_rules": "गुजरात जल संसाधन विकास निगम (GWRDC) और CGWA के तहत तटीय व लवणीय क्षेत्रों और डार्क जोन में नए बोरवेल के लिए अनुमति आवश्यक है।",
+        "en_rules": "Under Gujarat Water Resources Development Corporation (GWRDC) and CGWA norms, drilling in salinity-prone coastal aquifers and critical blocks requires permission.",
+        "portal": "https://gwrdc.gujarat.gov.in"
+    },
+    "west bengal": {
+        "aliases": ["west bengal", "bengal", "पश्चिम बंगाल", "बंगाल"],
+        "title": "West Bengal (पश्चिम बंगाल)",
+        "status": "SWID Regulated",
+        "hi_rules": "पश्चिम बंगाल भूजल संसाधन (प्रबंधन, नियंत्रण एवं विनियमन) अधिनियम के तहत राज्य जल जांच निदेशालय (SWID) से परमिट लेना अनिवार्य है।",
+        "en_rules": "Under the West Bengal Ground Water Resources Act, permission from the State Water Investigation Directorate (SWID) is mandatory for tube-well sinking.",
+        "portal": "https://wbswid.gov.in"
+    },
+    "madhya pradesh": {
+        "aliases": ["madhya pradesh", "mp", "मध्य प्रदेश", "एमपी"],
+        "title": "Madhya Pradesh (मध्य प्रदेश)",
+        "status": "MP Peya Jal Parirakshan Adhiniyam",
+        "hi_rules": "मध्य प्रदेश में जल संकटग्रस्त घोषित क्षेत्रों में बिना अनुविभागीय अधिकारी (SDM) की पूर्व अनुमति के नलकूप खनन प्रतिबंधित है।",
+        "en_rules": "Under MP Drinking Water Preservation Act, borewell drilling in notified water-scarcity areas is restricted without prior permission from the local SDM.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "kerala": {
+        "aliases": ["kerala", "केरल"],
+        "title": "Kerala (केरल)",
+        "status": "Kerala Ground Water Authority (KGWA)",
+        "hi_rules": "केरल राज्य भूजल (नियंत्रण एवं विनियमन) अधिनियम 2002 के तहत नए वाणिज्यिक बोरवेल के लिए KGWA परमिट अनिवार्य है।",
+        "en_rules": "Under the Kerala Ground Water (Control and Regulation) Act 2002, permit from the State Ground Water Authority is mandatory for commercial extraction.",
+        "portal": "https://groundwater.kerala.gov.in"
+    },
+    "andhra pradesh": {
+        "aliases": ["andhra pradesh", "andhra", "आंध्र प्रदेश"],
+        "title": "Andhra Pradesh (आंध्र प्रदेश)",
+        "status": "AP WALTA Act",
+        "hi_rules": "आंध्र प्रदेश जल, वृक्ष एवं भूमि अधिनियम (WALTA) के तहत बोरवेल लगाने से पहले ग्राम राजस्व अधिकारी/तहसीलदार के पास पंजीकरण अनिवार्य है।",
+        "en_rules": "Under the AP Water, Land and Trees Act (WALTA), prior registration and clearance from the local Mandal Revenue Officer (MRO/Tahsildar) is mandatory.",
+        "portal": "https://walta.ap.gov.in"
+    },
+    "telangana": {
+        "aliases": ["telangana", "तेलंगाना"],
+        "title": "Telangana (तेलंगाना)",
+        "status": "Telangana WALTA Act",
+        "hi_rules": "तेलंगाना WALTA नियमों के अनुसार नए कृषि व घरेलू बोरवेल का ऑनलाइन पंजीकरण अनिवार्य है। डार्क जोन में नए बोरवेल प्रतिबंधित हैं।",
+        "en_rules": "Under Telangana WALTA norms, online registration is mandatory for all new borewells. Over-exploited watersheds restrict new non-drinking borewells.",
+        "portal": "https://gwd.telangana.gov.in"
+    },
+    "odisha": {
+        "aliases": ["odisha", "orissa", "ओडिशा", "उड़ीसा"],
+        "title": "Odisha (ओडिशा)",
+        "status": "Safe (~44% Extraction)",
+        "hi_rules": "ओडिशा में अधिकांश क्षेत्र सुरक्षित श्रेणी में हैं। कृषि बोरवेल जल संसाधन विभाग के तहत अनुमत हैं; औद्योगिक बोरवेल हेतु CGWA NOC आवश्यक है।",
+        "en_rules": "Groundwater extraction in Odisha is largely in Safe category (~44%). Standard agricultural borewells are permitted; industrial extraction requires CGWA clearance.",
+        "portal": "https://dowr.odisha.gov.in"
+    },
+    "jharkhand": {
+        "aliases": ["jharkhand", "झारखंड"],
+        "title": "Jharkhand (झारखंड)",
+        "status": "CGWA Regulated (~32% Extraction)",
+        "hi_rules": "झारखंड में भूजल स्तर पठारी भूभाग पर निर्भर है। कृषि बोरवेल की अनुमति है, लेकिन गहरे सबमर्सिबल खनन के लिए स्थानीय नगर निकाय/CGWA से अनुमति जरूरी है।",
+        "en_rules": "Groundwater development in Jharkhand is safe (~32%). Domestic and agricultural tube-wells are allowed under local registration; commercial use requires CGWA NOC.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "chhattisgarh": {
+        "aliases": ["chhattisgarh", "छत्तीसगढ़"],
+        "title": "Chhattisgarh (छत्तीसगढ़)",
+        "status": "CGWA Regulated (~49% Extraction)",
+        "hi_rules": "छत्तीसगढ़ में कृषि और घरेलू नलकूप अनुमत हैं। डार्क जोन ब्लॉक जैसे बालोद, बेमेतरा में नए वाणिज्यिक बोरवेल पर प्रतिबंध है।",
+        "en_rules": "Standard agricultural tube-wells are permitted. Critical/over-exploited blocks require prior permission from the State Ground Water Authority & CGWA.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "uttarakhand": {
+        "aliases": ["uttarakhand", "उत्तराखंड", "uttaranchal"],
+        "title": "Uttarakhand (उत्तराखंड)",
+        "status": "UGWRA Regulated",
+        "hi_rules": "उत्तराखंड भूजल विनियमन प्राधिकरण के तहत तराई व भाबर क्षेत्रों में गहरे ट्यूबवेल हेतु अनुमति एवं अनिवार्य रिचार्ज पिट अनिवार्य है।",
+        "en_rules": "Under Uttarakhand Ground Water Authority, borewell drilling in Tarai and Bhabar belts requires mandatory registration and rainwater recharge shafts.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "himachal pradesh": {
+        "aliases": ["himachal pradesh", "himachal", "हिमाचल प्रदेश"],
+        "title": "Himachal Pradesh (हिमाचल प्रदेश)",
+        "status": "HP Ground Water Authority",
+        "hi_rules": "हिमाचल प्रदेश भूजल (विकास एवं प्रबंधन विनियमन एवं नियंत्रण) अधिनियम के तहत राज्य भूजल प्राधिकरण से पूर्व अनुमति अनिवार्य है।",
+        "en_rules": "Under the HP Ground Water Act, prior permission and registration from the State Ground Water Authority is mandatory before drilling any borewell.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "assam": {
+        "aliases": ["assam", "असम"],
+        "title": "Assam (असम)",
+        "status": "Safe Category (~14% Extraction)",
+        "hi_rules": "असम में भूजल स्तर बहुत समृद्ध और सुरक्षित श्रेणी (~14%) में है। सामान्य पंजीकरण के साथ कृषि व घरेलू बोरवेल लगाने की पूरी छूट है।",
+        "en_rules": "Assam maintains abundant groundwater reserves in the Safe category (~14% extraction). Agricultural and domestic shallow/deep tube-wells are permitted under standard norms.",
+        "portal": "https://cgwaonline.gov.in"
     }
 }
+
 
 
 
@@ -1098,8 +1195,12 @@ class INGRESSQLAgent:
            - Live Web Search Grounding for official notices/rules
         4. Generates responses strictly following intent rules (crop suggestions ONLY if asked).
         """
+        from app.indic_nlp import clean_query_typos
+        user_query = clean_query_typos(user_query)
+
         # Step 1: Indic NLP Intent & Entity Extraction
         nlp_result = await parse_indic_intent_and_entities(user_query)
+
         detected_lang = nlp_result.get("language", "en")
         lang = requested_language if requested_language in ("hi", "en") else detected_lang
         indic_intent = nlp_result.get("intent", "water_status")
