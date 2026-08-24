@@ -450,9 +450,9 @@ Requires Chrome 90+, Edge 90+, or Safari 15+. Ensure Microphone permission is gr
 
 ---
 
-## 11. 📜 License & Data Attribution
+## 11.  Data Attribution
 
-- **Code**: MIT License
+
 - **Groundwater Data**: Central Ground Water Board (CGWB), Ministry of Jal Shakti, Government of India — January 2026 Groundwater Level Monitoring Data — [cgwb.gov.in](https://cgwb.gov.in)
 - **Weather Data**: [Open-Meteo](https://open-meteo.com) — CC BY 4.0
 
