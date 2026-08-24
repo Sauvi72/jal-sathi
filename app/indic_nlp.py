@@ -99,11 +99,18 @@ TYPO_CORRECTIONS = {
     r"\bmausam\b": "weather",
     r"\bmosam\b": "weather",
     r"\bfasle\b": "fasal",
-    r"\bfaslo\b": "fasal",
+    r"\bfaslen\b": "fasal",
     r"\bfaslein\b": "fasal",
+    r"\bfaslo\b": "fasal",
+    r"\bfaslon\b": "fasal",
+    r"\bfasalon\b": "fasal",
+    r"\bfashal\b": "fasal",
+    r"\bfashle\b": "fasal",
+    r"\bfashlen\b": "fasal",
     r"\bफैसले\b": "फसल",
     r"\bफैसल\b": "फसल",
     r"\bफैसलों\b": "फसल",
+    r"\bफैसलें\b": "फसल",
     r"\bफसलें\b": "फसल",
     r"\bफसलों\b": "फसल",
     r"\bpanni\b": "paani",
@@ -113,6 +120,7 @@ TYPO_CORRECTIONS = {
     r"\bvarsa\b": "rain",
     r"\bsichaye\b": "sichai"
 }
+
 
 
 def clean_query_typos(text: str) -> str:
@@ -298,12 +306,14 @@ def classify_intent_local(query: str) -> Tuple[str, float]:
         return "borewell_rule", 0.95
 
     crop_keywords = [
-        "crop", "crops", "farming", "fasal", "faslein", "kheti", "sichai", "irrigation",
-        "kya ugana chahiye", "konsi fasal", "what to grow", "agriculture", "ugana", "ugayein",
-        "ugaye", "ugana chahiye", "boye", "bona", "kheti badi", "grow", "plant", "produce",
-        "फसल", "फसलें", "खेती", "सिंचाई", "उपयुक्त फसल", "मोटे अनाज", "ड्रिप", "बोएं",
-        "बोना", "क्या उगाएं", "कौनसी फसल", "उपज", "कृषि"
+        "crop", "crops", "farming", "fasal", "faslen", "fasle", "faslein", "faslon", "fasalon", "fashal", "fashle",
+        "kheti", "sichai", "irrigation", "kya ugana chahiye", "konsi fasal", "kaun si fasal", "kaun si faslen", "what to grow",
+        "agriculture", "ugana", "ugayein", "ugaye", "ugana chahiye", "uga sakta", "uga sakte", "uga sakti",
+        "boye", "boyen", "bona", "kheti badi", "grow", "plant", "produce",
+        "फसल", "फसलें", "फसलों", "फैसले", "फैसलें", "खेती", "सिंचाई", "उपयुक्त फसल", "मोटे अनाज", "ड्रिप", "बोएं",
+        "बोना", "क्या उगाएं", "कौनसी फसल", "उपज", "कृषि", "उगा सकते", "उगा सकता", "उगाएं"
     ]
+
     if any(w in q_lower for w in crop_keywords):
         return "crop_advisory", 0.95
 

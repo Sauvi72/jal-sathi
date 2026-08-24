@@ -1020,8 +1020,16 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
             return "SCHEME", dist
 
         # 4. CROPS check
-        if any(w in q_lower for w in ["crop", "crops", "fasal", "faslein", "sichai", "irrigation", "drip", "sprinkler", "kheti", "plant", "grow", "फसल", "सिंचाई", "खेती", "ड्रिप", "स्प्रिंकलर"]):
+        crop_keywords = [
+            "crop", "crops", "farming", "agriculture", "fasal", "faslen", "fasle", "faslein", "faslon", "fasalon", "fashal", "fashle",
+            "kheti", "kheti badi", "kisan", "sichai", "irrigation", "drip", "sprinkler",
+            "ugana", "ugaye", "ugayein", "uga sakta", "uga sakte", "uga sakti", "boye", "boyen", "bona",
+            "plant", "grow", "produce",
+            "फसल", "फसलें", "फसलों", "फैसले", "फैसलें", "खेती", "कृषि", "सिंचाई", "ड्रिप", "स्प्रिंकलर", "बोएं", "बोना", "उगाएं", "उगाना", "उगा सकते", "उगा सकता"
+        ]
+        if any(w in q_lower for w in crop_keywords):
             return "CROPS", dist
+
 
         # 5. BOREWELL & GROUNDWATER check
         if any(w in q_lower for w in ["borewell", "tubewell", "boring", "drilling", "pump", "बोरवेल", "नलकूप", "बोरिंग", "अनुमति", "permission", "allowed"]):
@@ -1447,9 +1455,18 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
 
         # Step 1.3: Regional Agro-Climatic Cache Fast-Path for Crops
         q_lower = user_query.lower()
-        if any(w in q_lower for w in ["crop", "crops", "fasal", "kheti", "फसल", "खेती", "ugaye", "ugana"]):
+        is_crop_q = (
+            intent_type == "CROPS" or
+            indic_intent == "crop_advisory" or
+            any(w in q_lower for w in [
+                "crop", "crops", "farming", "agriculture", "fasal", "faslen", "fasle", "faslein", "faslon", "fasalon",
+                "kheti", "kheti badi", "kisan", "sichai", "irrigation", "ugana", "ugaye", "ugayein", "uga sakta",
+                "uga sakte", "uga sakti", "boye", "boyen", "bona", "फसल", "फसलें", "खेती", "कृषि", "उगा", "बोएं"
+            ])
+        )
+        if is_crop_q:
             for cache_city in REGIONAL_AGRO_CLIMATIC_CACHE:
-                if cache_city in q_lower:
+                if cache_city in q_lower or (candidate and cache_city in candidate.lower()):
                     region_name = cache_city.title()
                     cached_data = REGIONAL_AGRO_CLIMATIC_CACHE[cache_city]
                     if lang == "hi":
@@ -1479,6 +1496,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                         "language": lang,
                         "status": "success"
                     }
+
 
         # Step 1.4: State-Level Borewell & Groundwater Router
         for state_key, state_data in STATE_BOREWELL_RULES.items():
@@ -1698,23 +1716,37 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
 
 
         # Map Indic NLP intent to internal intent format
-        if indic_intent == "borewell_rule":
-            intent = "BOREWELL"
-        elif indic_intent == "crop_advisory":
+        if intent_type == "CROPS" or indic_intent == "crop_advisory" or is_crop_q:
             intent = "CROP"
-        elif indic_intent == "water_status":
+        elif indic_intent == "borewell_rule" or intent_type == "BOREWELL":
+            intent = "BOREWELL"
+        elif indic_intent == "water_status" or intent_type == "GROUNDWATER":
             intent = "EXTRACTION_LEVEL"
         else:
             intent = "GENERAL_DISTRICT"
 
-        # Check if user explicitly asked for crops in query text
-        q_lower = user_query.lower()
-        if any(w in q_lower for w in ["crop", "crops", "fasal", "faslein", "kheti", "ugaye", "ugana", "फसल", "खेती", "बोएं"]):
-            intent = "CROP"
+        # If user is asking for crops, strictly return ICAR Agricultural Advisory and bypass water table records
+        if intent == "CROP":
+            target_loc = candidate if candidate else "Local Region"
+            crop_md, spoken = await asyncio.to_thread(self.fetch_dynamic_crop_advisory, target_loc, lang)
+            return {
+                "query": user_query,
+                "response": crop_md,
+                "spoken_text": spoken,
+                "sql_query_used": f"ICAR Agricultural Advisory Grounding ({source_model})",
+                "district": target_loc,
+                "category_status": None,
+                "extraction_percentage": None,
+                "cached_from_db": False,
+                "auto_cached": True,
+                "language": lang,
+                "status": "success"
+            }
 
         # Step 4: Check Local SQLite for Exact/High-Confidence Station or District Record
         lat, lon = get_district_coordinates(candidate)
         cached_record = await asyncio.to_thread(get_location_full_assessment, candidate)
+
 
         # Serves from Local SQLite ONLY if there is an exact village/block station or valid district average
         if cached_record and (cached_record.get("is_exact_station") or cached_record.get("is_district_avg")):
