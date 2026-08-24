@@ -341,8 +341,9 @@ async def call_huggingface_inference(text: str) -> Optional[Dict[str, Any]]:
 
     for api_url in endpoints:
         try:
-            async with httpx.AsyncClient(timeout=6.0) as client:
+            async with httpx.AsyncClient(timeout=1.5) as client:
                 resp = await client.post(api_url, headers=headers, json=payload)
+
                 if resp.status_code == 200:
                     data = resp.json()
                     # Format 1: List of dicts [{'label': '...', 'score': 0.95}, ...]

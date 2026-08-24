@@ -277,16 +277,14 @@ STATE_BOREWELL_RULES = {
 
 
 FALLBACK_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-2.5-flash-lite",
-    "gemini-3.6-flash",
-    "gemini-3.7-flash",
-    "gemini-3.5-flash",
     "gemini-3.5-flash-lite",
-    "gemini-3-flash-preview",
-    "gemini-flash-latest"
+    "gemini-flash-latest",
+    "gemini-3.5-flash",
+    "gemini-3.6-flash",
+    "gemini-3-flash-preview"
 ]
+
+
 
 def get_genai_client():
     import os
@@ -321,8 +319,8 @@ async def generate_grounded_response(prompt: str, lang: str = "hi", custom_syste
             "Keep answers concise, direct, and formatted in clean bullet points."
         )
 
-        # 1. First Pass: Try Grounded Search
-        for model_name in FALLBACK_MODELS:
+        # 1. First Pass: Try Grounded Search (Single-model check to avoid 10s cascading retry overhead)
+        for model_name in FALLBACK_MODELS[:2]:
             try:
                 config = types.GenerateContentConfig(
                     system_instruction=system_prompt,
@@ -352,10 +350,15 @@ async def generate_grounded_response(prompt: str, lang: str = "hi", custom_syste
                                         break
                     return response.text.strip(), source_url
             except Exception as e:
-                logger.warning(f"⚠️ Grounded {model_name} failed ({e}). Trying next model...")
+                err_str = str(e)
+                logger.warning(f"⚠️ Grounded {model_name} failed ({err_str}).")
+                if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower():
+                    # Search quota exhausted; switch to standard LLM immediately to prevent delay
+                    logger.info("⚡ Search tool quota reached. Fast-switching to standard LLM generation...")
+                    break
                 continue
 
-        # 2. Second Pass: If Grounded Search quota was limited, fallback to standard LLM generation
+        # 2. Second Pass: Instant Standard LLM generation without search tool overhead
         for model_name in FALLBACK_MODELS:
             try:
                 config = types.GenerateContentConfig(
@@ -375,6 +378,7 @@ async def generate_grounded_response(prompt: str, lang: str = "hi", custom_syste
             except Exception as e:
                 logger.warning(f"⚠️ Standard {model_name} failed ({e}).")
                 continue
+
     except Exception as e:
         logger.error(f"GenAI client initialization error: {e}")
 
@@ -482,13 +486,18 @@ class INGRESSQLAgent:
                                             break
                         return resp.text.strip(), source_url
                 except Exception as model_err:
-                    logger.warning(f"Grounded search with {model_name} failed: {model_err}")
+                    err_str = str(model_err)
+                    logger.warning(f"Grounded search with {model_name} failed: {err_str}")
+                    if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "quota" in err_str.lower():
+                        logger.info("⚡ Search tool rate limit reached. Fast-switching to standard LLM generation...")
+                        break
         except Exception as e:
             logger.warning(f"GenAI client initialization error: {e}")
 
         # Fallback to standard invoke_gemini without web grounding
         content = self.invoke_gemini(f"{system_instruction}\n\n{prompt}" if system_instruction else prompt)
         return content, None
+
 
 
 
