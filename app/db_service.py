@@ -378,8 +378,13 @@ STOPWORDS = {
     "naya", "naye", "nayi", "nawa", "kaise", "kaisa", "baare", "bataiye", "tarika", "yahan",
     "bhi", "aur", "ya", "par", "se", "ko", "ne", "kab", "kyun", "kaun", "kaunsi", "zila", "zilla",
     "laga", "lagayein", "lagana", "lagao", "lagaya", "kare", "karein", "karna", "diya", "huye",
-    "bad", "good", "new", "old", "top", "sub", "san", "val", "low", "mid", "job", "scheduler"
+    "bad", "good", "new", "old", "top", "sub", "san", "val", "low", "mid", "job", "scheduler",
+    # State names & common state tokens to prevent false village matching (e.g. Bihar -> Baihar, Delhi -> Delli)
+    "bihar", "delhi", "punjab", "haryana", "rajasthan", "gujarat", "maharashtra", "karnataka",
+    "kerala", "tamilnadu", "up", "uttar", "pradesh", "mp", "madhya", "andhra", "telangana",
+    "odisha", "orissa", "bengal", "assam", "jharkhand", "chhattisgarh", "uttarakhand", "himachal"
 }
+
 
 
 

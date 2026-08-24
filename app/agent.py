@@ -101,6 +101,83 @@ REGIONAL_AGRO_CLIMATIC_CACHE = {
     }
 }
 
+STATE_BOREWELL_RULES = {
+    "delhi": {
+        "aliases": ["delhi", "दिल्ली", "dilli", "nct"],
+        "title": "Delhi (NCT of Delhi)",
+        "status": "डार्क ज़ोन / अति-दोहित (Over-Exploited)",
+        "hi_rules": "दिल्ली में भूजल स्तर अत्यधिक नीचे होने के कारण दिल्ली जल बोर्ड (DJB) और CGWA के कड़े नियमों के तहत नए निजी/घरेलू बोरवेल पर पूर्ण प्रतिबंध है। केवल आपातकालीन सरकारी योजनाओं को विशेष अनुमति संभव है।",
+        "en_rules": "Under Delhi Jal Board (DJB) and CGWA notifications, drilling new private/domestic borewells is strictly prohibited across NCT of Delhi due to critical groundwater depletion. Only emergency government drinking water schemes with mandatory Rainwater Harvesting may receive exceptional clearance.",
+        "portal": "https://delhijalboard.delhi.gov.in"
+    },
+    "bihar": {
+        "aliases": ["bihar", "बिहार"],
+        "title": "Bihar (बिहार)",
+        "status": "सुरक्षित से सेमी-क्रिटिकल (Safe to Semi-Critical - ~64% दोहन)",
+        "hi_rules": "बिहार में कृषि व घरेलू बोरवेल सामान्य पंजीकरण के साथ अनुमत हैं। व्यावसायिक व औद्योगिक बोरवेल के लिए बिहार राज्य प्रदूषण नियंत्रण बोर्ड और CGWA से अनापत्ति प्रमाण पत्र (NOC) लेना अनिवार्य है।",
+        "en_rules": "In Bihar, agricultural and domestic borewells/tube-wells are permitted under standard local registration. Commercial and industrial water extraction strictly requires an NOC from the Bihar State Pollution Control Board and CGWA.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "tamil nadu": {
+        "aliases": ["tamil nadu", "tamilnadu", "तमिलनाडु", "तमिलनाडू"],
+        "title": "Tamil Nadu (तमिलनाडु)",
+        "status": "विनियमित (TWAD Board)",
+        "hi_rules": "तमिलनाडु में नए बोरवेल के लिए TWAD Board और स्थानीय पंचायत से अनुमति जरूरी है। राज्य के 138 अति-दोहित (Over-Exploited) ब्लॉकों में नए व्यावसायिक बोरवेल पर पूर्ण प्रतिबंध है।",
+        "en_rules": "In Tamil Nadu, borewell installation is governed by the TWAD Board & State Ground Water Authority. New private/commercial drilling is strictly prohibited in 138 notified over-exploited blocks without prior statutory NOC.",
+        "portal": "https://www.twadboard.tn.gov.in"
+    },
+    "punjab": {
+        "aliases": ["punjab", "पंजाब"],
+        "title": "Punjab (पंजाब)",
+        "status": "अति-दोहित (Over-Exploited - 164% दोहन)",
+        "hi_rules": "पंजाब में 117 से अधिक ब्लॉक डार्क ज़ोन में हैं। यहाँ पंजाब जल विनियमन प्राधिकरण (PWRDA) के तहत नए व्यावसायिक व औद्योगिक नलकूपों पर कड़ा शुल्क और अनुमति अनिवार्य है।",
+        "en_rules": "Under Punjab Water Regulation & Development Authority (PWRDA), over 117 blocks are in Over-Exploited state (>164% extraction). Strict tariffs and mandatory permissions apply for new commercial water extraction.",
+        "portal": "https://pwrda.punjab.gov.in"
+    },
+    "haryana": {
+        "aliases": ["haryana", "हरियाणा"],
+        "title": "Haryana (हरियाणा)",
+        "status": "HWRA Regulated",
+        "hi_rules": "हरियाणा जल संसाधन प्राधिकरण (HWRA) के तहत रेड ज़ोन ब्लॉकों में नए बोरवेल पर रोक है। कृषि बोरवेल के लिए ड्रिप सिंचाई और सौर ऊर्जा पंप को प्राथमिकता दी जाती है।",
+        "en_rules": "Governed by Haryana Water Resources Authority (HWRA). Red zone blocks prohibit new borewells. Micro-irrigation and solar pump adoption are mandatory for agricultural permissions.",
+        "portal": "https://hwra.haryana.gov.in"
+    },
+    "rajasthan": {
+        "aliases": ["rajasthan", "राजस्थान"],
+        "title": "Rajasthan (राजस्थान)",
+        "status": "डार्क ज़ोन (Over-Exploited - 200%+ दोहन)",
+        "hi_rules": "राजस्थान के अधिकांश जिलों में भूजल स्तर अत्यधिक गहरा है। डार्क ज़ोन ब्लॉकों में नए बोरवेल के लिए CGWA और राज्य भूजल विभाग से NOC लेना अनिवार्य है।",
+        "en_rules": "Due to acute depletion (>200% extraction in many blocks), new borewells in notified blocks require strict statutory NOC and mandatory artificial recharge units.",
+        "portal": "https://cgwaonline.gov.in"
+    },
+    "uttar pradesh": {
+        "aliases": ["uttar pradesh", "up", "उत्तर प्रदेश", "यूपी"],
+        "title": "Uttar Pradesh (उत्तर प्रदेश)",
+        "status": "UP Ground Water Act 2019",
+        "hi_rules": "उत्तर प्रदेश भूजल प्रबंधन एवं विनियमन अधिनियम 2019 के तहत सभी नए व पुराने बोरवेल का 'upgwdonline.in' पोर्टल पर ऑनलाइन पंजीकरण अनिवार्य है।",
+        "en_rules": "Under the UP Ground Water Management and Regulation Act 2019, mandatory online registration and authorization is required via the upgwdonline.in portal for all tube-wells.",
+        "portal": "https://upgwdonline.in"
+    },
+    "maharashtra": {
+        "aliases": ["maharashtra", "महाराष्ट्र"],
+        "title": "Maharashtra (महाराष्ट्र)",
+        "status": "GSDA Regulated",
+        "hi_rules": "महाराष्ट्र में GSDA नियमों के तहत वाटरशेड क्षेत्रों और डार्क ज़ोन में 60 मीटर (200 फीट) से गहरे बोरवेल पर रोक है और स्थानीय प्राधिकरण से मंजूरी अनिवार्य है।",
+        "en_rules": "Under GSDA norms, drilling deeper than 60 meters (200 ft) in notified water-stressed watersheds is restricted and requires local district authority permission.",
+        "portal": "https://gsda.maharashtra.gov.in"
+    },
+    "karnataka": {
+        "aliases": ["karnataka", "कर्नाटक"],
+        "title": "Karnataka (कर्नाटक)",
+        "status": "KGWA Regulated",
+        "hi_rules": "कर्नाटक भूजल प्राधिकरण (KGWA) के तहत चिन्हित अति-दोहित तालुकों में नए बोरवेल की खुदाई से पहले ऑनलाइन परमिशन लेना अनिवार्य है।",
+        "en_rules": "Under the Karnataka Ground Water Authority (KGWA), drilling in notified over-exploited taluks requires prior statutory permission and mandatory registration.",
+        "portal": "https://kgwa.karnataka.gov.in"
+    }
+}
+
+
+
 
 class INGRESSQLAgent:
     def __init__(self):
@@ -1090,10 +1167,49 @@ class INGRESSQLAgent:
                         "status": "success"
                     }
 
+        # Step 1.4: State-Level Borewell & Groundwater Router
+        for state_key, state_data in STATE_BOREWELL_RULES.items():
+            aliases = state_data.get("aliases", [state_key])
+            if any(alias in q_lower for alias in aliases):
+                if any(w in q_lower for w in ["borewell", "borwell", "rule", "rules", "permission", "noc", "allow", "allowed", "water", "level", "depth", "status", "नियम", "बोरवेल", "अनुमति", "पानी", "डार्क", "dark", "लगवा", "लगा"]):
 
+                    title = state_data["title"]
+                    status = state_data["status"]
+                    portal = state_data["portal"]
+                    if lang == "hi":
+                        state_md = (
+                            f"📍 **{title} — बोरवेल एवं भूजल नियम:**\n"
+                            f"• 📊 **श्रेणी:** {status}\n"
+                            f"• ⚖️ **नियम व अनुमति:** {state_data['hi_rules']}\n"
+                            f"• 🔗 **NOC पोर्टल:** {portal}"
+                        )
+                        spoken = f"{title} के लिए: {state_data['hi_rules']}"
+                    else:
+                        state_md = (
+                            f"📍 **{title} — Borewell & Groundwater Regulations:**\n"
+                            f"• 📊 **Category Status:** {status}\n"
+                            f"• ⚖️ **Regulations & Permission:** {state_data['en_rules']}\n"
+                            f"• 🔗 **NOC Portal:** {portal}"
+                        )
+                        spoken = f"For {title}: {state_data['en_rules']}"
+
+                    return {
+                        "query": user_query,
+                        "response": state_md,
+                        "spoken_text": spoken,
+                        "sql_query_used": f"State-Level CGWA/State Authority Database ({source_model})",
+                        "district": title,
+                        "category_status": status,
+                        "extraction_percentage": None,
+                        "cached_from_db": True,
+                        "auto_cached": False,
+                        "language": lang,
+                        "status": "success"
+                    }
 
         # Step 2: Handle Casual Greetings / Chat
         if indic_intent == "casual_chat" and not candidate:
+
             md, spoken = self.handle_greeting(user_query, lang)
             return {
                 "query": user_query,
