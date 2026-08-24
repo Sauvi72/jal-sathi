@@ -75,10 +75,13 @@ NON_DISTRICT_WORDS = {
     # Conversational & question words
     "what", "which", "where", "how", "who", "whom", "whose", "when", "why", "tell", "give", "show", "check", "know", "find", "get", "explain", "meaning", "definition", "list", "types",
     "is", "are", "was", "were", "the", "a", "an", "and", "or", "nor", "but", "so", "yet", "both", "either", "neither",
+    "i", "can", "could", "should", "would", "may", "might", "must", "grow", "suggest", "suggestion", "suggestions",
     "you", "your", "yours", "me", "my", "mine", "he", "she", "it", "they", "them", "this", "that", "these", "those", "self", "yourself",
     "kya", "kaise", "kitna", "kitni", "kitne", "batao", "bataye", "batana", "jankari", "suchna", "hai", "hain", "hoon", "hun", "ho", "ka", "ki", "ke", "aur", "ya", "mein", "par", "se", "ko",
+    "mera", "meri", "mere", "khet", "khet me", "khet mein", "main", "hum", "aap", "tum",
     "hi", "hello", "hey", "namaste", "namaskar", "pranam", "please", "kisan", "sahayak", "jal", "shakti", "india", "bharat", "state", "district", "block", "city", "village", "area", "region",
     "help", "madad", "chahiye", "good", "morning", "evening", "afternoon",
+
     
     # Hindi verbs & terms
     "डार्क", "जोन", "अतिदोहित", "अति-दोहित", "क्रिटिकल", "सुरक्षित", "सेमी", "पानी", "भूजल", "फसल", "फसलें", "सिंचाई", "बोरवेल", "नलकूप", "नियम", "सब्सिडी", "योजना", "अनुदान", "बचत", "तरीके", "सलाह", "कैटेगरी", "श्रेणी", "श्रेणियां", "दोहन", "स्तर", "अनुमति", "ड्रिप", "स्प्रिंकलर", "सहायक", "इंग्रेस",

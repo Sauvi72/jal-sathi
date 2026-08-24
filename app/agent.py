@@ -593,6 +593,13 @@ If lang is 'hi', respond in natural conversational Hindi. Keep answers strictly 
         for any Indian district or region using Gemini Google Search grounding.
         """
         clean_loc = location.strip().title()
+        if not clean_loc or clean_loc.lower() in ("local region", "i", "me", "khet", "location", "area"):
+            loc_label_hi = "कृषि क्षेत्र"
+            loc_label_en = "Agricultural Region"
+        else:
+            loc_label_hi = clean_loc
+            loc_label_en = clean_loc
+
         system_instruction = """You are an ICAR Agricultural Scientist & Kisan Mitra expert.
 When asked for crop recommendations for an Indian location, return ONLY:
 - 🌾 Kharif / Rabi / Zaid Suitable Crops: (Top 3-4 recommended drought-tolerant/high-yield crops)
@@ -600,7 +607,7 @@ When asked for crop recommendations for an Indian location, return ONLY:
 - 💡 Irrigation & Soil Advice: (Soil type suitability and water-saving irrigation methods like drip/sprinkler)
 Keep the answer strictly under 100 words, direct, bulleted, and without boilerplate greetings."""
 
-        prompt = f"Provide ICAR recommended agricultural crops, suitable soil types, and irrigation advice for {clean_loc}, India. Language: {lang}"
+        prompt = f"Provide ICAR recommended agricultural crops, suitable soil types, and irrigation advice for {loc_label_en}, India. Language: {lang}"
         content, source_url = self.invoke_gemini_grounded(
             prompt,
             system_instruction=system_instruction,
@@ -614,28 +621,29 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
             clean_md = re.sub(r'^```markdown\s*', '', clean_md)
             clean_md = re.sub(r'^```\s*', '', clean_md)
             clean_md = re.sub(r'\s*```$', '', clean_md).strip()
-            md = f"📍 **{clean_loc} — फसल एवं कृषि सलाह (ICAR / KVK Advisory):**\n{clean_md}{citation}" if lang == "hi" else f"📍 **{clean_loc} — Agricultural Crop Advisory (ICAR / KVK):**\n{clean_md}{citation}"
-            spoken = f"{clean_loc} के लिए उपयुक्त फसलें और कृषि सलाह इस प्रकार हैं।" if lang == "hi" else f"Here are the ICAR recommended crops for {clean_loc}."
+            md = f"📍 **{loc_label_hi} — फसल एवं कृषि सलाह (ICAR / KVK Advisory):**\n{clean_md}{citation}" if lang == "hi" else f"📍 **{loc_label_en} — Agricultural Crop Advisory (ICAR / KVK):**\n{clean_md}{citation}"
+            spoken = f"{loc_label_hi} के लिए उपयुक्त फसलें और कृषि सलाह इस प्रकार हैं।" if lang == "hi" else f"Here are the ICAR recommended crops for {loc_label_en}."
             return md, spoken
 
         # Clean fallback
         if lang == "hi":
             md = (
-                f"📍 **{clean_loc} — फसल एवं कृषि सलाह (Agro-Climatic Zone):**\n"
+                f"📍 **{loc_label_hi} — फसल एवं कृषि सलाह (Agro-Climatic Zone):**\n"
                 f"• 🌾 **उपयुक्त फसलें:** मक्का, बाजरा, दलहन (मूंग, उड़द), चना, सरसों और मौसमी सब्जियां।\n"
                 f"• ⚠️ **परहेज:** अत्यधिक पानी खींचने वाले धान और गन्ने की बाढ़ सिंचाई से बचें।\n"
                 f"• 💡 **सिंचाई सलाह:** ड्रिप और फव्वारा सिंचाई (PMKSY 55% सरकारी सब्सिडी) अपनाएं।"
             )
-            spoken = f"{clean_loc} के लिए मक्का, बाजरा, दलहन और सरसों उपयुक्त फसलें हैं।"
+            spoken = f"{loc_label_hi} के लिए मक्का, बाजरा, दलहन और सरसों उपयुक्त फसलें हैं।"
         else:
             md = (
-                f"📍 **{clean_loc} — Suitable Crops (Agro-Climatic Zone):**\n"
+                f"📍 **{loc_label_en} — Suitable Crops (Agro-Climatic Zone):**\n"
                 f"• 🌾 **Recommended Crops:** Maize, Pearl Millet (Bajra), Pulses (Moong, Gram), Mustard, and seasonal vegetables.\n"
                 f"• ⚠️ **Crops to Avoid:** Heavy flood-irrigated Paddy and water-intensive Sugarcane.\n"
                 f"• 💡 **Irrigation Advice:** Practice micro-irrigation (Drip/Sprinkler with 55% PMKSY subsidy)."
             )
-            spoken = f"For {clean_loc}, recommended crops are Maize, Pearl Millet, Pulses, and Mustard."
+            spoken = f"For {loc_label_en}, recommended crops are Maize, Pearl Millet, Pulses, and Mustard."
         return md, spoken
+
 
 
 
