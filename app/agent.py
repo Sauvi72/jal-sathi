@@ -1491,10 +1491,15 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                             f"• ⚠️ **Crops to Avoid:** {cached_data['en_avoid']}\n"
                             f"• 💡 **Irrigation Advice:** {cached_data['en_tech']}"
                         )
+                    spoken_text_val = (
+                        f"{region_name} के लिए उपयुक्त फसलें {cached_data['hi_suitable']} हैं।"
+                        if lang == "hi"
+                        else f"For {region_name}, recommended crops are {cached_data['en_suitable']}."
+                    )
                     return {
                         "query": user_query,
                         "response": crop_md,
-                        "spoken_text": f"For {region_name}, recommended crops are {cached_data['en_suitable']}.",
+                        "spoken_text": spoken_text_val,
                         "sql_query_used": f"Pre-baked Regional Agro-Climatic Cache ({source_model})",
                         "district": region_name,
                         "category_status": None,
@@ -1504,6 +1509,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                         "language": lang,
                         "status": "success"
                     }
+
 
 
         # Step 1.4: State-Level Borewell & Groundwater Router
@@ -1593,10 +1599,15 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                             f"• ⚠️ **Crops to Avoid:** {cached_data['en_avoid']}\n"
                             f"• 💡 **Irrigation Advice:** {cached_data['en_tech']}"
                         )
+                    spoken_text_val = (
+                        f"{region_name} के लिए उपयुक्त फसलें {cached_data['hi_suitable']} हैं।"
+                        if lang == "hi"
+                        else f"For {region_name}, recommended crops are {cached_data['en_suitable']}."
+                    )
                     return {
                         "query": user_query,
                         "response": crop_md,
-                        "spoken_text": f"For {region_name}, recommended crops are {cached_data['en_suitable']}.",
+                        "spoken_text": spoken_text_val,
                         "sql_query_used": f"Pre-baked Regional Agro-Climatic Cache ({source_model})",
                         "district": region_name,
                         "category_status": None,
@@ -1665,6 +1676,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                         f"• ⚠️ **अति-दोहित क्षेत्र (Dark Zones):** चिन्हित ब्लॉकों में नए व्यावसायिक/व्यक्तिगत बोरवेल पर प्रतिबंध है।\n"
                         f"• 🔗 **NOC पोर्टल:** https://cgwaonline.gov.in"
                     )
+                    spoken_rule_text = f"{region_name} में नए बोरवेल के लिए CGWA पोर्टल से ऑनलाइन NOC रजिस्ट्रेशन जरूरी है।"
                 else:
                     fallback_rule_md = (
                         f"📍 **{region_name} — Borewell Regulations:**\n"
@@ -1672,10 +1684,11 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                         f"• ⚠️ **Dark Zones:** New commercial/individual borewells strictly prohibited in notified Over-Exploited blocks.\n"
                         f"• 🔗 **NOC Portal:** https://cgwaonline.gov.in"
                     )
+                    spoken_rule_text = f"{region_name} borewell rules require mandatory NOC registration from CGWA."
                 return {
                     "query": user_query,
                     "response": fallback_rule_md,
-                    "spoken_text": f"{region_name} borewell rules require mandatory NOC registration from CGWA.",
+                    "spoken_text": spoken_rule_text,
                     "sql_query_used": f"CGWA State Regulation Directive ({source_model})",
                     "district": region_name,
                     "category_status": None,
@@ -1687,6 +1700,7 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
                 }
 
             # Check if query asks for an out-of-database neighborhood, colony, or village
+
             if indic_intent in ("water_status", "borewell_rule", "general_district", "crop_advisory") or any(w in q_lower for w in ["water", "level", "borewell", "paani", "pani", "status", "depth"]):
                 logger.info(f"Out-of-database location query '{user_query}'. Invoking Real-Time Web Search Grounding...")
                 web_md_resp, source_url = await asyncio.to_thread(self.execute_realtime_web_grounding, user_query, lang)
