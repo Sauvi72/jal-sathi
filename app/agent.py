@@ -413,11 +413,11 @@ STATE_BOREWELL_RULES = {
 
 
 FALLBACK_MODELS = [
-    "gemini-3.5-flash-lite",
-    "gemini-flash-latest",
-    "gemini-3.5-flash",
-    "gemini-3.6-flash",
-    "gemini-3-flash-preview"
+    "gemini-2.5-flash",          # Primary — fastest with Search Grounding
+    "gemini-2.0-flash",          # Secondary — stable fallback
+    "gemini-2.5-flash-lite",     # Lite — quota-safe
+    "gemini-2.0-flash-lite",     # Ultra-lite
+    "gemini-1.5-flash",          # Final safety net
 ]
 
 
@@ -2027,18 +2027,24 @@ Keep the answer strictly under 100 words, direct, bulleted, and without boilerpl
             yield f"data: {evt}\n\n"
             await asyncio.sleep(0.012)
 
-        # Generate audio for spoken text with strict 2.0s timeout to never block frontend stream
+        # Generate audio for spoken text — 8s timeout ensures Hindi TTS never gets cut off
         from app.tts_service import generate_speech_base64
         audio_b64 = None
         try:
             text_to_speak = result.get("spoken_text") or result.get("response") or ""
+            lang_for_tts = result.get("language", "hi")
+            # clean_hindi_for_tts already applied in process_query; use spoken_text if available
             if text_to_speak and len(text_to_speak.strip()) > 0:
                 audio_b64 = await asyncio.wait_for(
-                    generate_speech_base64(text_to_speak, result.get("language", "en")),
-                    timeout=2.0
+                    generate_speech_base64(text_to_speak, lang_for_tts),
+                    timeout=8.0
                 )
+                logger.info(f"TTS generated successfully for lang={lang_for_tts}, len={len(text_to_speak)}")
+        except asyncio.TimeoutError:
+            logger.warning("TTS generation timed out (>8s) — skipping audio for this response")
+            audio_b64 = None
         except Exception as tts_err:
-            logger.warning(f"Stream async TTS pre-computation timeout/skip: {tts_err}")
+            logger.warning(f"TTS pre-computation error: {tts_err}")
             audio_b64 = None
 
         result["audio_base64"] = audio_b64

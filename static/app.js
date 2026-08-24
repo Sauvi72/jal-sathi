@@ -626,7 +626,9 @@ function appendStreamingBotMessage() {
             if (speakBtn) {
                 speakBtn.setAttribute('data-content', result.response || '');
                 if (result.spoken_text) speakBtn.setAttribute('data-spoken', result.spoken_text);
-                if (result.audio_base64) speakBtn.setAttribute('data-audio', result.audio_base64);
+                if (result.audio_base64) {
+                    speakBtn.setAttribute('data-audio', result.audio_base64);
+                }
             }
             container.scrollTop = container.scrollHeight;
         },
@@ -726,7 +728,11 @@ async function handleSend() {
         if (finalMetadata) {
             streamMsg.finalize(finalMetadata);
             if (autoTTS && finalMetadata.audio_base64) {
+                // Audio pre-computed server-side — play immediately
                 playServerAudio(finalMetadata.audio_base64, streamMsg.speakBtn);
+            } else if (autoTTS && finalMetadata.spoken_text) {
+                // Audio not in payload — fetch from /api/tts now
+                speakText(streamMsg.speakBtn, finalMetadata.spoken_text, null);
             } else {
                 setOrbState('idle');
             }
