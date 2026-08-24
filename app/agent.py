@@ -66,7 +66,22 @@ Few-Shot Dialogues:
 """
 
 REGIONAL_AGRO_CLIMATIC_CACHE = {
-
+    "vijaynagar": {
+        "hi_suitable": "मक्का (Maize), बाजरा (Bajra), मूंगफली (Groundnut), अरहर/तूर, चना और तिल (लाल और काली दोमट मिट्टी विशेष)।",
+        "en_suitable": "Maize, Pearl Millet (Bajra), Groundnut, Pigeon Pea (Arhar), Gram, and Sesame (Red & Black Loam Zone).",
+        "hi_avoid": "पारंपरिक बाढ़ सिंचाई वाला धान (चावल) और गन्ना जैसी भारी पानी खींचने वाली फसलें।",
+        "en_avoid": "Flood-irrigated Paddy and heavy Sugarcane cultivation without water management.",
+        "hi_tech": "ड्रिप (टपक) और स्प्रिंकलर (फव्वारा) सिंचाई अपनाएं (PMKSY में 55% सरकारी सब्सिडी उपलब्ध)।",
+        "en_tech": "Adopt Drip and Sprinkler micro-irrigation systems (up to 55% PMKSY subsidy)."
+    },
+    "bellary": {
+        "hi_suitable": "मक्का, बाजरा, कपास (BT Cotton), मूंगफली, चना और सूरजमुखी।",
+        "en_suitable": "Maize, Pearl Millet, BT Cotton, Groundnut, Bengal Gram, and Sunflower.",
+        "hi_avoid": "अधिक पानी खींचने वाले धान और गन्ने की अनियंत्रित बाढ़ सिंचाई।",
+        "en_avoid": "Uncontrolled flood irrigation of Paddy and Sugarcane.",
+        "hi_tech": "ड्रिप सिंचाई प्रणाली और जैविक मल्चिंग का उपयोग करें।",
+        "en_tech": "Utilize Drip irrigation and organic mulching for moisture conservation."
+    },
     "coimbatore": {
         "hi_suitable": "मक्का (Maize), बाजरा (Pearl Millet), दलहन (मूंग, उरद), नारियल और सूखा-सहनशील तिलहन (तिल, मूंगफली)।",
         "en_suitable": "Maize, Pearl Millet (Bajra), Short-duration Pulses (Moong, Blackgram), Groundnut, and Drought-tolerant Sesame (Red-loamy zone).",
@@ -98,8 +113,25 @@ REGIONAL_AGRO_CLIMATIC_CACHE = {
         "en_avoid": "Excessive flood irrigation and unmanaged waterlogging.",
         "hi_tech": "जल संरक्षण हेतु संतुलित सिंचाई और मल्चिंग (Mulching) का उपयोग करें।",
         "en_tech": "Practice balanced micro-irrigation, mulching, and bed planting for water conservation."
+    },
+    "pune": {
+        "hi_suitable": "ज्वार, बाजरा, सोयाबीन, मूंग, चना, प्याज और मौसमी सब्जियां।",
+        "en_suitable": "Jowar, Bajra, Soybean, Moong, Gram, Onion, and seasonal vegetables.",
+        "hi_avoid": "गन्ने की पारंपरिक बाढ़ सिंचाई से बचें।",
+        "en_avoid": "Flood irrigation of heavy Sugarcane crops.",
+        "hi_tech": "ड्रिप सिंचाई और रिज-एंड-फरो विधि अपनाएं।",
+        "en_tech": "Adopt Drip irrigation and Ridge & Furrow bed planting."
+    },
+    "meerut": {
+        "hi_suitable": "गेहूं, सरसों, मक्का, दलहन, और ड्रिप सिंचाई पर आधारित गन्ना।",
+        "en_suitable": "Wheat, Mustard, Maize, Short-duration Pulses, and Drip-fertigated Sugarcane.",
+        "hi_avoid": "भूजल के अंधाधुंध दोहन और अनियंत्रित बाढ़ सिंचाई से बचें।",
+        "en_avoid": "Uncontrolled tube-well flood irrigation.",
+        "hi_tech": "फव्वारा सिंचाई और लेजर लैंड लेवलिंग का प्रयोग करें।",
+        "en_tech": "Adopt Sprinkler systems and Laser Land Levelling."
     }
 }
+
 
 STATE_BOREWELL_RULES = {
     "delhi": {
